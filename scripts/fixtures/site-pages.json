@@ -1,0 +1,24 @@
+{
+  "source": "https://www.erinmikailstaples.com/sitemap-pages.xml",
+  "checked": "2026-11-11",
+  "pages": [
+    { "slug": "resume", "title": "Resume" },
+    { "slug": "about", "title": "about", "empty": true },
+    { "slug": "tools", "title": "tools", "empty": true },
+    { "slug": "links", "title": "Links", "empty": true },
+    { "slug": "strangeloop-2023", "title": "Strangeloop 2023" },
+    { "slug": "newsletter", "title": "Newsletter", "empty": true },
+    { "slug": "coming-from", "title": "coming from" },
+    { "slug": "now", "title": "now" },
+    { "slug": "codeland-2022", "title": "CodeLand 2022" },
+    { "slug": "personal-updates", "title": "Personal Updates" },
+    { "slug": "words", "title": "words" },
+    { "slug": "humor", "title": "funny business!" }
+  ],
+  "navigation": [
+    { "label": "All Posts", "url": "/tag/all-posts/" },
+    { "label": "Now", "url": "/now/" },
+    { "label": "Events", "url": "https://www.lu.ma/erinmikail" },
+    { "label": "Resume", "url": "/resume/#" }
+  ]
+}

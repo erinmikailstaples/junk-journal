@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { readFileSync } from 'node:fs';
+
+const existingSite = JSON.parse(readFileSync(new URL('../scripts/fixtures/site-pages.json', import.meta.url), 'utf8'));
+const tutorialPath = '/building-tutorial-tinder-from-idea-to-deployed-replit-demo/';
 
 test('every journal page and plain mode pass automated WCAG AA checks', async ({ page }) => {
     await page.goto('/');
@@ -193,7 +197,7 @@ test('scraps, keyboard envelope, focus, history, and persisted plain mode work',
     await page.locator('.mode-toggle').click();
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('data-mode', 'plain');
-    await page.goto('/a-place-for-things/');
+    await page.goto(tutorialPath);
     await expect(page.locator('html')).toHaveAttribute('data-mode', 'plain');
     await expect(page.locator('.gh-content')).toContainText('sample entry');
     await page.locator('.mode-toggle').click();
@@ -269,13 +273,48 @@ test('all sections remain readable without JavaScript', async ({ browser }) => {
 });
 
 test('article and archive templates render and are accessible', async ({ page }) => {
-    for (const path of ['/a-place-for-things/', '/page/2/', '/about/', '/tag/notes/', '/author/erin/', '/not-a-page/']) {
+    for (const path of [tutorialPath, '/page/2/', '/about/', '/tag/all-posts/', '/author/erin/', '/not-a-page/']) {
         const response = await page.goto(path);
         expect(response.status()).toBe(path === '/not-a-page/' ? 404 : 200);
         await expect(page.locator('h1')).toBeVisible();
         const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
         expect(results.violations, `${path}: ${JSON.stringify(results.violations, null, 2)}`).toEqual([]);
     }
+});
+
+test('existing sitemap pages render as pages in journal and plain mode', async ({ page }) => {
+    for (const mode of ['journal', 'plain']) {
+        await page.goto('/');
+        if (mode === 'plain') await page.locator('.mode-toggle').click();
+        for (const fixture of existingSite.pages) {
+            const response = await page.goto(`/${fixture.slug}/`);
+            expect(response.status(), fixture.slug).toBe(200);
+            await expect(page.locator('body')).toHaveClass('page-template');
+            await expect(page.locator('.article h1')).toHaveText(fixture.title);
+            expect(await page.evaluate(() => document.documentElement.dataset.mode ?? 'journal')).toBe(mode);
+            if (fixture.empty) await expect(page.locator('.gh-content')).toBeEmpty();
+            else await expect(page.locator('.gh-content')).toContainText('sample page');
+        }
+    }
+});
+
+test('existing navigation and resume links stay on the current Ghost site', async ({ page }) => {
+    await page.goto('/#about');
+    const navigation = page.locator('#about .extra-links .nav');
+    await expect(navigation.getByRole('link')).toHaveCount(existingSite.navigation.length);
+    await navigation.getByRole('link', { name: 'All Posts', exact: true }).click();
+    await expect(page).toHaveURL(/\/tag\/all-posts\/$/);
+    await expect(page.locator('.archive h1')).toHaveText('all posts');
+    await page.goto('/#about');
+    await navigation.getByRole('link', { name: 'Now', exact: true }).click();
+    await expect(page).toHaveURL(/\/now\/$/);
+    await expect(page.locator('.article h1')).toHaveText('now');
+    await page.goto('/');
+    await page.locator('.resume-scrap').click();
+    await expect(page).toHaveURL('http://127.0.0.1:2468/resume/');
+    await expect(page.locator('.article h1')).toHaveText('Resume');
+    await page.goto('/#about');
+    await expect(page.locator('#about a', { hasText: 'formal version' })).toHaveAttribute('href', 'http://127.0.0.1:2468/resume/');
 });
 
 test('capture journal and plain-mode previews', async ({ page }, testInfo) => {

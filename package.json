@@ -14,13 +14,14 @@
     "dev": "node scripts/preview.mjs",
     "test": "node --test test/*.test.mjs",
     "test:browser": "playwright test",
-    "check": "gscan .",
+    "check": "node scripts/check.mjs",
+    "check:zip": "node scripts/check.mjs dist/erin-junk-journal.zip",
     "zip": "node scripts/package.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.0",
     "@playwright/test": "^1.56.0",
-    "gscan": "^4.0.0",
+    "gscan": "^6.7.0",
     "handlebars": "^4.7.8",
     "jsdom": "^26.0.0"
   },

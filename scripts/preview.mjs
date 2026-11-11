@@ -7,11 +7,12 @@ import Handlebars from 'handlebars';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const hbs = Handlebars.create();
 const pkg = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
+const existingSite = JSON.parse(await readFile(resolve(root, 'scripts/fixtures/site-pages.json'), 'utf8'));
 const safe = value => new Handlebars.SafeString(value);
 const sample = {
     title: 'Building Tutorial Tinder: from idea to deployed Replit demo',
-    slug: 'a-place-for-things',
-    url: '/a-place-for-things/',
+    slug: 'building-tutorial-tinder-from-idea-to-deployed-replit-demo',
+    url: '/building-tutorial-tinder-from-idea-to-deployed-replit-demo/',
     html: '<p>This is a sample entry for the local theme preview. The title is from Erin’s existing site; this placeholder is not the original article.</p><p><a href="https://www.erinmikailstaples.com/building-tutorial-tinder-from-idea-to-deployed-replit-demo/">Read the original Tutorial Tinder article ↗</a></p><h2>Start with curiosity.</h2><p>This page demonstrates the reading layout. A live Ghost installation supplies the real article content.</p><blockquote>Leave room in the margins.</blockquote>',
     excerpt: 'From idea to deployed Replit demo. A tutorial from the existing notebook.',
     primary_tag: { name: 'Replit / How to' },
@@ -21,17 +22,24 @@ const sample = {
 const project = {
     ...sample,
     title: 'What building a Reactigotchi can teach you about an applications “memory”',
-    url: '/an-experiment/',
+    slug: 'what-building-a-reactigotchi-can-teach-you-about-an-applications-memory',
+    url: '/what-building-a-reactigotchi-can-teach-you-about-an-applications-memory/',
     html: '<p>This is a sample entry for the local theme preview, using a real title from Erin’s existing site.</p><p><a href="https://www.erinmikailstaples.com/what-building-a-reactigotchi-can-teach-you-about-an-applications-memory/">Read the original Reactigotchi tutorial ↗</a></p>',
     excerpt: 'React, state, and developer education — by way of a digital pet.',
     primary_tag: { name: 'React / How to' },
     date: '05 NOV 2025'
 };
 const samples = [sample, project];
+const previewPages = [...existingSite.pages, { slug: 'contact', title: 'Contact' }].map(page => ({
+    ...page,
+    url: `/${page.slug}/`,
+    html: page.empty ? '' : '<p>This is a sample page for the local theme preview, not a copy of the published content. On Ghost, the existing page content stays at this URL.</p>',
+    access: true
+}));
 
 hbs.registerHelper('asset', path => `/assets/${path}`);
 hbs.registerHelper('meta_title', () => 'Erin Mikail Staples — the notebook');
-hbs.registerHelper('body_class', () => 'home-template');
+hbs.registerHelper('body_class', function () { return `${this.previewTemplate}-template`; });
 hbs.registerHelper('post_class', () => 'post');
 hbs.registerHelper('ghost_head', () => '');
 hbs.registerHelper('ghost_foot', () => '');
@@ -54,7 +62,7 @@ hbs.registerHelper('match', function (value, operator, expected, options) {
     if (operator !== '!=') throw new Error(`Unsupported preview match operator: ${operator}`);
     return value !== expected ? options.fn(this) : options.inverse(this);
 });
-hbs.registerHelper('tag', options => options.fn({ name: 'Field notes', description: 'Ideas worth keeping.' }));
+hbs.registerHelper('tag', function (options) { return options.fn(this.previewTag); });
 hbs.registerHelper('author', options => options.fn({ name: 'Erin Mikail Staples' }));
 hbs.registerHelper('url', function () { return this.url; });
 hbs.registerHelper('content', function () { return safe(this.html || ''); });
@@ -64,13 +72,21 @@ hbs.registerHelper('authors', () => 'Erin Mikail Staples');
 hbs.registerHelper('tags', () => 'Field notes');
 hbs.registerHelper('img_url', url => url);
 hbs.registerHelper('pagination', () => safe('<nav class="pagination" aria-label="Pagination"><span>Page 1 of 1</span></nav>'));
-hbs.registerHelper('navigation', () => '');
+hbs.registerHelper('navigation', function (options) {
+    const navigation = options.hash.type === 'secondary' ? options.data.site.secondary_navigation : options.data.site.navigation;
+    if (!navigation?.length) return '';
+    const links = navigation.map(link => {
+        const url = new URL(link.url, options.data.site.url).href;
+        return `<li><a href="${Handlebars.escapeExpression(url)}">${Handlebars.escapeExpression(link.label)}</a></li>`;
+    });
+    return safe(`<ul class="nav">${links.join('')}</ul>`);
+});
 hbs.registerHelper('comments', () => '');
 for (const file of await readdir(resolve(root, 'partials'))) {
     if (file.endsWith('.hbs')) hbs.registerPartial(file.slice(0, -4), await readFile(resolve(root, 'partials', file), 'utf8'));
 }
 const data = {
-    site: { title: 'Erin Mikail Staples', url: `http://127.0.0.1:${process.env.PORT || 2368}`, locale: 'en', navigation: false },
+    site: { title: 'Erin Mikail Staples', url: `http://127.0.0.1:${process.env.PORT || 2368}`, locale: 'en', navigation: existingSite.navigation },
     page: { show_title_and_feature_image: true },
     custom: { introduction: pkg.config.custom.introduction.default, contact_email: pkg.config.custom.contact_email.default }
 };
@@ -93,12 +109,14 @@ const server = http.createServer(async (req, res) => {
         else if (path.startsWith('/page/')) template = 'index';
         else if (path.startsWith('/tag/')) template = 'tag';
         else if (path.startsWith('/author/')) template = 'author';
-        else if (['/about/', '/contact/'].includes(path)) template = 'page';
+        else if (previewPages.some(page => page.url === path)) template = 'page';
         else if (samples.some(post => post.url === path)) template = 'post';
         const templateText = (await readFile(resolve(root, `${template}.hbs`), 'utf8')).replace(/\{\{!< default\}\}/g, '');
         const context = {
             posts: samples,
-            previewPost: samples.find(post => post.url === path),
+            previewTemplate: template,
+            previewPost: [...samples, ...previewPages].find(post => post.url === path),
+            previewTag: { name: path.split('/')[2]?.replace(/-/g, ' '), description: 'Sample tag archive for the local theme preview.' },
             statusCode: 404,
             message: 'We could not find that page.'
         };
