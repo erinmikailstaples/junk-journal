@@ -1,0 +1,7 @@
+{{!< default}}
+<section class="archive paper-page">
+    <span class="page-eyebrow">THE NOTEBOOK / ALL ENTRIES</span>
+    <h1>Odds, ends &amp; <em>ideas.</em></h1>
+    <div class="archive-grid">{{#foreach posts}}{{> "post-card"}}{{else}}<p>A fresh notebook. The words are on their way.</p>{{/foreach}}</div>
+    {{pagination}}
+</section>

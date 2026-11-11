@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="{{@site.locale}}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>{{meta_title}}</title>
+    <link rel="stylesheet" href="{{asset "css/journal.css"}}">
+    <script src="{{asset "js/mode.js"}}"></script>
+    {{ghost_head}}
+</head>
+<body class="{{body_class}}">
+    <a class="skip-link" href="#site-main">Skip to content</a>
+    <div class="desk">
+        <header class="site-header">
+            <a class="wordmark" href="{{@site.url}}">ems<span aria-hidden="true">✳</span><span class="sr-only"> — home</span></a>
+            <span class="header-note">PERSONAL WEBSITE. PUBLIC NOTEBOOK. ZERO CHILL.</span>
+            <button class="mode-toggle" type="button" aria-pressed="false" hidden>
+                <span class="mode-icon" aria-hidden="true">Aa</span>
+                <span data-mode-label>Just the website, please.</span>
+                <span aria-hidden="true">↗</span>
+            </button>
+        </header>
+        <p class="plain-intro">It's a fucking website. Same human. No glue sticks required.</p>
+        <div class="journal">
+            <main id="site-main" tabindex="-1">
+                {{{body}}}
+            </main>
+            {{> "navigation"}}
+        </div>
+        <footer class="site-footer">
+            <span>HANDMADE ENERGY. HYPERLINKS INCLUDED.</span>
+            <span>© {{date format="YYYY"}} <a href="{{@site.url}}">{{@site.title}}</a> <span aria-hidden="true">·</span> <a href="https://ghost.org/" rel="external">Published with Ghost</a></span>
+        </footer>
+    </div>
+    <div class="mode-status sr-only" role="status" aria-live="polite"></div>
+    <script src="{{asset "js/journal.js"}}" defer></script>
+    {{ghost_foot}}
+</body>
+</html>
