@@ -1,6 +1,6 @@
 # Erin's junk journal
 
-A Ghost 5+ theme for Erin Mikail Staples. A DIY punk zine masquerading as an open scrapbook: hot-pink desk, acid-yellow scraps, photocopied type, checkerboard tape, metallic binding, an actual portrait, and side-tab navigation. Plus a cheeky plain-site alternative. No runtime framework, tracking, third-party fonts, or external image requests by default.
+A Ghost 5+ theme for Erin Mikail Staples. A DIY punk zine masquerading as an open scrapbook: scuffed pink desk, acid-yellow scraps, torn cut-out type, masking tape, duct-tape binding, a high-contrast xerox portrait, and side-tab navigation. Plus a cheeky plain-site alternative. No runtime framework, tracking, third-party fonts, or external image requests by default.
 
 ## Install in Ghost
 
