@@ -4,6 +4,35 @@
     const status = document.querySelector('.mode-status');
     const pages = Array.from(document.querySelectorAll('[data-journal-page]'));
     const tabs = Array.from(document.querySelectorAll('[data-section]'));
+    const note = document.querySelector('.secret-note');
+
+    if (note) {
+        let openedByHover = false;
+        note.addEventListener('pointerenter', event => {
+            if (event.pointerType === 'mouse' && root.dataset.mode !== 'plain' && !note.open) {
+                note.open = true;
+                openedByHover = true;
+            }
+        });
+        note.addEventListener('pointerleave', event => {
+            if (event.pointerType === 'mouse' && openedByHover) {
+                note.open = false;
+                openedByHover = false;
+            }
+        });
+        note.querySelector('summary').addEventListener('click', event => {
+            if (openedByHover) {
+                event.preventDefault();
+                openedByHover = false;
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && note.open && (openedByHover || note.contains(document.activeElement))) {
+                note.open = false;
+                openedByHover = false;
+            }
+        });
+    }
 
     function showPage({ focus = false } = {}) {
         const id = location.hash.slice(1) || 'home';

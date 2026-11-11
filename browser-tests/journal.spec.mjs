@@ -183,7 +183,7 @@ test('decorations do not overlap note or ticket text', async ({ page }) => {
     }
 });
 
-test('scraps, keyboard envelope, focus, history, and persisted plain mode work', async ({ page }) => {
+test('scraps, keyboard note, focus, history, and persisted plain mode work', async ({ page }) => {
     await page.goto('/');
     await page.locator('.portrait-print').click();
     await expect(page).toHaveURL(/#about$/);
@@ -202,6 +202,74 @@ test('scraps, keyboard envelope, focus, history, and persisted plain mode work',
     await expect(page.locator('.gh-content')).toContainText('sample entry');
     await page.locator('.mode-toggle').click();
     await expect(page.locator('html')).toHaveAttribute('data-mode', 'journal');
+});
+
+test('lightbulb note opens on hover, stays hoverable, and can be dismissed', async ({ page }) => {
+    await page.goto('/');
+    const note = page.locator('.secret-note');
+    const summary = note.locator('summary');
+    const message = note.locator('p');
+    await expect(note.locator('.lightbulb-doodle')).toBeVisible();
+    await expect(summary).toHaveAccessibleName('Open note');
+    await expect(summary.locator('.handwritten')).toHaveCount(0);
+    await summary.hover();
+    await expect(message).toBeVisible();
+
+    const summaryBox = await summary.boundingBox();
+    const messageBox = await message.boundingBox();
+    expect(messageBox.y + messageBox.height).toBeGreaterThanOrEqual(summaryBox.y);
+    const x = Math.min(summaryBox.x + summaryBox.width / 2, messageBox.x + messageBox.width - 5);
+    await page.mouse.move(x, summaryBox.y + 2);
+    await page.mouse.move(x, messageBox.y + messageBox.height / 2, { steps: 10 });
+    await expect(message).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(note).not.toHaveAttribute('open', '');
+
+    await page.mouse.move(0, 0);
+    await summary.hover();
+    await expect(message).toBeVisible();
+    await page.mouse.move(0, 0);
+    await expect(note).not.toHaveAttribute('open', '');
+});
+
+test('click pins the hovered note and plain mode keeps a native disclosure', async ({ page }) => {
+    await page.goto('/');
+    const note = page.locator('.secret-note');
+    const summary = note.locator('summary');
+    await summary.hover();
+    await summary.click();
+    await page.mouse.move(0, 0);
+    await expect(note).toHaveAttribute('open', '');
+    await summary.click();
+    await expect(note).not.toHaveAttribute('open', '');
+
+    await page.locator('.mode-toggle').click();
+    await expect(note.locator('.lightbulb-doodle')).toBeHidden();
+    const labelBox = await summary.getByText('Open note').boundingBox();
+    expect(labelBox.width).toBeGreaterThan(1);
+    expect(labelBox.height).toBeGreaterThan(1);
+    await summary.hover();
+    await expect(note).not.toHaveAttribute('open', '');
+    await summary.click();
+    await expect(note.locator('p')).toBeVisible();
+});
+
+test.describe('lightbulb note on touch', () => {
+    test.use({ hasTouch: true, viewport: { width: 390, height: 844 } });
+
+    test('opens and closes by tapping without overflowing the viewport', async ({ page }) => {
+        await page.goto('/');
+        const note = page.locator('.secret-note');
+        const summary = note.locator('summary');
+        await summary.tap();
+        const message = note.locator('p');
+        await expect(message).toBeVisible();
+        const box = await message.boundingBox();
+        expect(box.x).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width).toBeLessThanOrEqual(390);
+        await summary.tap();
+        await expect(note).not.toHaveAttribute('open', '');
+    });
 });
 
 test('fabric index tabs work without patch artwork and plain mode hides decoration', async ({ page }) => {
@@ -267,6 +335,8 @@ test('all sections remain readable without JavaScript', async ({ browser }) => {
     await page.goto('http://127.0.0.1:2468/');
     await expect(page.locator('[data-journal-page]:visible')).toHaveCount(5);
     await expect(page.locator('.mode-toggle')).toBeHidden();
+    await page.locator('.secret-note summary').click();
+    await expect(page.locator('.secret-note p')).toBeVisible();
     await page.locator('.index-tabs [data-section="contact"]').click();
     await expect(page).toHaveURL(/#contact$/);
     await context.close();
