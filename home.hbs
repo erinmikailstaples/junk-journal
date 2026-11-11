@@ -4,11 +4,12 @@
     <section class="spread home-spread" id="home" aria-labelledby="home-title" data-journal-page>
         <div class="paper-page cover-page">
             <div class="page-eyebrow"><span>ISSUE NO. 001 / NOT A PERSONAL BRAND™</span><span aria-hidden="true">↘</span></div>
-            <h1 id="home-title" class="name-collage"><span class="first-name">erin</span> <span class="middle-name">mikail</span> <span class="last-name">staples<span class="name-star" aria-hidden="true">✳</span></span></h1>
+            <h1 id="home-title" class="name-collage"><span class="name-text">Erin Mikail Staples</span><span class="first-name" aria-hidden="true"><span class="cut c1">E</span><span class="cut c2">R</span><span class="cut c3">I</span><span class="cut c4">N</span></span><span class="middle-name" aria-hidden="true"><span class="cut c5">M</span><span class="cut c6">I</span><span class="cut c7">K</span><span class="cut c8">A</span><span class="cut c2">I</span><span class="cut c4">L</span></span><span class="last-name" aria-hidden="true"><span class="cut c3">S</span><span class="cut c8">T</span><span class="cut c1">A</span><span class="cut c6">P</span><span class="cut c5">L</span><span class="cut c7">E</span><span class="cut c2">S</span></span></h1>
             <span class="handwritten name-note" aria-hidden="true">yes, like the office supply. no, not a corporation.</span>
             <div class="cover-collection">
                 <a class="portrait-print" href="#about" data-section-link>
                     <span class="tape tape-top" aria-hidden="true"></span>
+                    <svg class="foil-sticker foil-portrait" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#shape-heart" fill="url(#foil-holo)"/><use href="#shape-heart" fill="url(#foil-glare)"/></svg>
                     <img src="{{#if @custom.portrait}}{{img_url @custom.portrait size="medium"}}{{else}}{{asset "images/erin-headshot.jpg"}}{{/if}}" width="800" height="836" alt="Erin Mikail Staples, in glasses and a black jacket, at a developer event">
                     <span class="photo-caption">HOWDY. THIS IS MY FACE. ↗</span>
                     <span class="hover-label">meet the human behind the tabs ↗</span>
@@ -42,6 +43,8 @@
                 <span class="note-link">Tutorials, rabbit holes &amp; other brain noise <span aria-hidden="true">↗</span></span>
                 <span class="note-doodle" aria-hidden="true">✷</span>
             </a>
+            <svg class="foil-sticker foil-note" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#shape-star" fill="url(#foil-gold)"/><use href="#shape-star" fill="url(#foil-glare)"/></svg>
+            <svg class="foil-sticker foil-ticket" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#shape-bolt" fill="url(#foil-silver)"/><use href="#shape-bolt" fill="url(#foil-glare)"/></svg>
             <div class="bottom-scraps">
                 <details class="secret-note">
                     <summary><span class="envelope" aria-hidden="true">!</span><span class="handwritten">open the damn note</span><span class="sr-only"> — open note</span></summary>
@@ -59,6 +62,7 @@
             <span class="page-eyebrow">02 / THE HUMAN BEHIND THE NOTEBOOK</span>
             <span class="handwritten">a few things to know</span>
             <h2 id="about-title">MORE HUMAN.<br>LESS <em>PERSONAL BRAND.</em></h2>
+            <svg class="foil-sticker foil-about" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#shape-sparkle" fill="url(#foil-rose)"/><use href="#shape-sparkle" fill="url(#foil-glare)"/></svg>
             <img class="about-portrait" src="{{#if @custom.portrait}}{{img_url @custom.portrait size="medium"}}{{else}}{{asset "images/erin-headshot.jpg"}}{{/if}}" alt="Erin Mikail Staples at a developer event" width="800" height="836" loading="lazy">
         </div>
         <div class="paper-page section-content">
@@ -80,6 +84,7 @@
             <h2 id="writing-title">THINKING<br><em>OUT LOUD.</em></h2>
             <p>Developer experience, AI, tutorials, and the occasional bad joke. Learn something. Break something. Tell me what happened.</p>
             <img class="section-patch" src="{{asset "images/patch-writing.png"}}" width="256" height="256" alt="" aria-hidden="true" loading="lazy">
+            <svg class="foil-sticker foil-writing" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#shape-moon" fill="url(#foil-silver)"/><use href="#shape-moon" fill="url(#foil-glare)"/></svg>
         </div>
         <div class="paper-page section-content">
             <span class="page-eyebrow">THE LATEST ENTRIES</span>
@@ -115,6 +120,7 @@
             <span class="handwritten">the internet is better with people</span>
             <h2 id="contact-title">GOOD PEOPLE.<br>WEIRD IDEAS.<br><em>SAY HEY.</em></h2>
             <img class="section-patch" src="{{asset "images/patch-contact.png"}}" width="256" height="256" alt="" aria-hidden="true" loading="lazy">
+            <svg class="foil-sticker foil-contact" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#shape-flower" fill="url(#foil-lime)"/><use href="#shape-flower" fill="url(#foil-glare)"/></svg>
         </div>
         <div class="paper-page section-content contact-content">
             {{#get "pages" filter="slug:contact" limit="1"}}

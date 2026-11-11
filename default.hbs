@@ -10,11 +10,16 @@
     {{ghost_head}}
 </head>
 <body class="{{body_class}}">
+    {{> "sticker-sprite"}}
     <a class="skip-link" href="#site-main">Skip to content</a>
     <div class="desk">
         <header class="site-header">
             <a class="wordmark" href="{{@site.url}}">ems<span aria-hidden="true">✳</span><span class="sr-only"> — home</span></a>
             <span class="header-note">PERSONAL WEBSITE. PUBLIC NOTEBOOK. ZERO CHILL.</span>
+            <button class="sticker-toggle" type="button" aria-expanded="false" aria-controls="sticker-sheet" hidden>
+                <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#shape-star" fill="url(#foil-holo)"/><use href="#shape-star" fill="url(#foil-glare)"/></svg>
+                Sticker sheet
+            </button>
             <button class="mode-toggle" type="button" aria-pressed="false" hidden>
                 <span class="mode-icon" aria-hidden="true">Aa</span>
                 <span data-mode-label>Just the website, please.</span>
@@ -33,8 +38,18 @@
             <span>© {{date format="YYYY"}} <a href="{{@site.url}}">{{@site.title}}</a> <span aria-hidden="true">·</span> <a href="https://ghost.org/" rel="external">Published with Ghost</a></span>
         </footer>
     </div>
+    <section class="sticker-sheet" id="sticker-sheet" aria-labelledby="sticker-sheet-title" hidden>
+        <div class="sticker-sheet-head">
+            <h2 id="sticker-sheet-title">Sticker sheet</h2>
+            <button class="sticker-close" type="button">Close<span class="sr-only"> sticker sheet</span></button>
+        </div>
+        <p id="sticker-help">Drag a sticker onto the journal, or pick one to stick it in the middle. Drag placed stickers anywhere. With a keyboard: arrow keys move it, R spins it, Delete peels it off.</p>
+        <ul class="sticker-choices" role="list"></ul>
+        <button class="sticker-clear" type="button">Peel everything off this page</button>
+    </section>
     <div class="mode-status sr-only" role="status" aria-live="polite"></div>
     <script src="{{asset "js/journal.js"}}" defer></script>
+    <script src="{{asset "js/stickers.js"}}" defer></script>
     {{ghost_foot}}
 </body>
 </html>

@@ -134,3 +134,56 @@ test('capture journal and plain-mode previews', async ({ page }, testInfo) => {
     await page.locator('.mode-toggle').click();
     await page.screenshot({ path: testInfo.outputPath('plain-desktop.png'), fullPage: true });
 });
+
+test('visitors can stick, move, keep, and peel metallic stickers with a keyboard', async ({ page }) => {
+    await page.goto('/');
+    const toggle = page.getByRole('button', { name: 'Sticker sheet', exact: true });
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.getByRole('button', { name: 'Add gold star' })).toBeFocused();
+    const sheetScan = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(sheetScan.violations).toEqual([]);
+
+    await page.keyboard.press('Enter');
+    const sticker = page.getByRole('button', { name: 'Gold star sticker' });
+    await expect(sticker).toBeFocused();
+    const before = await sticker.evaluate(el => parseFloat(el.style.left));
+    await page.keyboard.press('Shift+ArrowRight');
+    expect(await sticker.evaluate(el => parseFloat(el.style.left))).toBeGreaterThan(before);
+
+    await page.reload();
+    await expect(page.getByRole('button', { name: 'Gold star sticker' })).toBeVisible();
+    await page.locator('.index-tabs [data-section="about"]').click();
+    await expect(page.locator('.placed-sticker')).toHaveCount(0);
+    await page.locator('.index-tabs [data-section="home"]').click();
+    await page.getByRole('button', { name: 'Gold star sticker' }).focus();
+    await page.keyboard.press('Delete');
+    await expect(page.locator('.placed-sticker')).toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Sticker sheet', exact: true }).click();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#sticker-sheet')).toBeHidden();
+    await expect(toggle).toBeFocused();
+    await page.locator('.mode-toggle').click();
+    await expect(toggle).toBeHidden();
+    await expect(page.locator('.foil-sticker').first()).toBeHidden();
+});
+
+test('stickers can be dragged straight off the sheet onto the journal', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Sticker sheet', exact: true }).click();
+    const choice = await page.getByRole('button', { name: 'Add silver moon' }).boundingBox();
+    const journal = await page.locator('.journal').boundingBox();
+    const drop = { x: journal.x + 200, y: journal.y + 300 };
+    await page.mouse.move(choice.x + choice.width / 2, choice.y + choice.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(drop.x, drop.y, { steps: 8 });
+    await expect(page.locator('.sticker-ghost')).toBeVisible();
+    await page.mouse.up();
+    const sticker = page.getByRole('button', { name: 'Silver moon sticker' });
+    await expect(sticker).toHaveCount(1);
+    await expect(page.locator('.sticker-ghost')).toHaveCount(0);
+    const box = await sticker.boundingBox();
+    expect(Math.abs(box.x + box.width / 2 - drop.x)).toBeLessThan(6);
+    expect(Math.abs(box.y + box.height / 2 - drop.y)).toBeLessThan(6);
+});

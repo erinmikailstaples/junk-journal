@@ -36,6 +36,7 @@ Run `npx playwright install chromium` once before the browser checks. They use t
 
 - The numbered fabric index tabs and scrapbook patches are real links. Labels are live text, not baked into images; decorative artwork is hidden from assistive technology and removed in plain mode. Keyboard, touch, browser Back/Forward, deep links, and opening in a new tab work. Navigation places focus on the new section heading.
 - The envelope opens with native `details`/`summary`; no essential information is hover-only. Portraits have descriptive alternative text and decorative elements are hidden from assistive technology.
+- The sticker sheet lets visitors drag metallic stickers onto the journal, or pick one to place it in the middle. Placed stickers are buttons: drag them, or use arrow keys (Shift for bigger steps) to move, R/Shift+R to rotate, and Delete to peel off. Stickers are saved per page in browser storage, capped at 30, announced to screen readers, and hidden in plain mode and print.
 - With JavaScript disabled, all five journal sections remain visible and navigation uses native anchors.
 - Plain mode exposes all the same sections as one readable document. It persists across pages when browser storage is available and reports when it cannot save. Its small early external script avoids a journal flash for returning plain-mode readers.
 - System fonts plus a self-hosted handwriting face, visible focus indicators, a skip link, semantic headings, reduced-motion support, responsive layouts, and print styles are included. Desktop side tabs become top index tabs on small screens so they don't force horizontal scrolling.
@@ -50,3 +51,4 @@ The bundled portrait is an optimized copy of [Erin's existing site portrait](htt
 The five bundled `assets/images/patch-*.png` illustrations are AI-generated textile artwork, created for this theme with Gemini 3 Pro Image and processed into transparent, locally served PNGs. They are original camp-inspired motifs, not official scouting insignia. Navigation remains usable if images are unavailable.
 
 [Reenie Beanie](https://fonts.google.com/specimen/Reenie+Beanie) by James Grieshaber is bundled in `assets/fonts/` under the SIL Open Font License 1.1.
+Space Grotesk (Florian Karsten), Abril Fatface, Alfa Slab One, Bowlby One, Special Elite, and Rubik Mono One are also bundled under the SIL Open Font License 1.1. The ransom-note display faces are subset to the letters in Erin's name, so edit `home.hbs` and re-subset them if the name changes.
