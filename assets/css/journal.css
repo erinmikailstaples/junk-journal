@@ -106,7 +106,7 @@ main:focus { outline: none; }
 .camp-patch > span:not(.sr-only) { background: #eee1bb; padding: 3px 6px; margin-top: -6px; font: bold 10px/1.3 "Courier New", monospace; box-shadow: 1px 2px 3px #48352044; }
 .camp-patch:is(:hover, :focus-visible) { transform: rotate(-4deg); }
 .section-patch { width: 180px; align-self: center; margin: 30px 0; transform: rotate(-9deg); filter: drop-shadow(3px 6px 3px #48352066); }
-.resume-scrap { background: #171717; color: #fff; padding: 4px 9px; font-family: "Courier New", monospace; font-size: 11px; transform: rotate(-6deg); }
+.resume-scrap { background: #171717; color: #fff; padding: 4px 9px; font-family: "Courier New", monospace; font-size: 11px; white-space: nowrap; transform: rotate(-6deg); }
 .arrow-note { font-size: 14px; transform: rotate(9deg); line-height: 1.2; text-align: center; }
 .arrow-note > span { font-size: 39px; display: block; }
 .page-bottom { display: flex; justify-content: space-between; position: absolute; bottom: 20px; left: 38px; right: 38px; font-family: "Courier New", monospace; font-size: 8px; letter-spacing: .02em; border-top: 2px solid #171717; padding-top: 10px; }
@@ -133,14 +133,14 @@ h2 em, .archive h1 em { font-weight: inherit; color: #171717; font-style: normal
 .note-link { font-size: 11px; border-bottom: 1px solid #171717; padding-bottom: 4px; }
 .note-link > span { margin-left: 5px; }
 .note-doodle { position: absolute; right: 12px; top: -18px; font-family: Arial, sans-serif; font-size: 42px; line-height: 1; color: #171717; transform: rotate(-12deg); }
-.bottom-scraps { display: flex; align-items: flex-start; gap: 20px; padding: 8px 0 37px; }
+.bottom-scraps { display: flex; align-items: flex-start; gap: 20px; padding: 32px 0 37px; }
 .secret-note { flex: 1; position: relative; z-index: 2; }
 .secret-note summary { display: flex; flex-direction: column; align-items: center; list-style: none; min-height: 70px; padding: 5px; }
 .secret-note summary::-webkit-details-marker { display: none; }
 .secret-note summary .handwritten { font-size: 15px; transform: rotate(-7deg); }
 .envelope { display: grid; place-items: center; width: 85px; height: 51px; border: 1px solid #171717; background: linear-gradient(150deg, transparent 49%, #171717 50%, transparent 52%) left/50% 100% no-repeat, linear-gradient(210deg, transparent 49%, #171717 50%, transparent 52%) right/50% 100% no-repeat, #f27ed5; font-family: var(--serif); font-size: 33px; color: #171717; transform: rotate(-8deg); box-shadow: 3px 3px 0 #171717; }
 .secret-note p { position: absolute; left: -12px; bottom: 82px; width: 230px; background: var(--acid); padding: 20px; box-shadow: 4px 4px 0 #171717; font-size: 13px; border: 2px solid #171717; }
-.hello-ticket { display: flex; flex-direction: column; width: 56%; background: #b9b6fc; border: 2px solid #171717; outline: 4px solid #b9b6fc; padding: 9px 10px; text-align: center; text-decoration: none; transform: rotate(-6deg); box-shadow: 5px 5px 0 #171717; }
+.hello-ticket { position: relative; display: flex; flex-direction: column; width: 56%; background: #b9b6fc; border: 2px solid #171717; outline: 4px solid #b9b6fc; padding: 9px 10px; text-align: center; text-decoration: none; transform: rotate(-6deg); box-shadow: 5px 5px 0 #171717; }
 .hello-ticket > span { font-family: "Courier New", monospace; font-size: 7px; letter-spacing: -.02em; font-weight: bold; }
 .hello-ticket strong { font-family: var(--serif); font-size: 29px; font-weight: 900; padding: 4px 0 7px; border-bottom: 2px dashed #171717; margin-bottom: 6px; white-space: nowrap; }
 .clippings { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0 15px; }
@@ -263,7 +263,7 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
 @media (max-width: 1100px) {
     .desk { padding: 18px 20px 22px; }
     .site-header { margin-bottom: 22px; gap: 12px; }
-    .wordmark { font-size: 32px; }
+    .wordmark { font-size: 32px; white-space: nowrap; }
     .header-note { display: none; }
     .mode-toggle { font-size: 9px; gap: 8px; padding: 5px 8px; }
     .mode-icon { font-size: 15px; padding-right: 8px; }
@@ -273,9 +273,10 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .index-tab { display: flex; flex: 1; min-width: 0; min-height: 68px; flex-direction: column; justify-content: center; gap: 2px; padding: 6px 3px 7px; border: 1px solid #82755d; border-bottom: 0; border-radius: 8px 8px 0 0; }
     .index-tab::before { inset: 4px 3px 0; border: 1px dashed #665a4375; border-bottom: 0; border-radius: 5px 5px 0 0; }
     .index-tab::after { top: auto; right: 0; bottom: 0; width: auto; height: 5px; background: linear-gradient(0deg, #322a2538, transparent); }
-    .index-tab > span:first-child { display: grid; writing-mode: horizontal-tb; white-space: normal; place-items: center; width: 100%; min-height: 28px; padding: 2px; font-size: 10px; transform: none; }
+    .index-tab > span:first-child { display: grid; writing-mode: horizontal-tb; white-space: normal; place-items: center; width: 100%; max-width: 140px; min-height: 28px; padding: 2px; font-size: 10px; transform: none; }
     .index-tab > .tab-number { font-size: 9px; }
     .spread { display: block; min-height: 0; }
+    html:not([data-mode="plain"]) [data-journal-page] { scroll-margin-top: 88px; }
     .paper-page { padding: 25px 28px 50px; }
     .spread > .paper-page:first-child { border-right: 0; border-bottom: 1px solid var(--line); box-shadow: none; }
     .spread > .paper-page:last-child { box-shadow: none; }
@@ -285,7 +286,7 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .middle-name { font-size: clamp(46px, 12.5vw, 88px); }
     .last-name { font-size: clamp(40px, 11vw, 78px); }
     .name-note { font-size: 13px; margin-left: 5px; }
-    .cover-collection { max-width: 370px; margin: 32px auto 20px; gap: 20px; }
+    .cover-collection { max-width: 370px; margin: 32px 0 20px; gap: 20px; }
     .portrait-print { width: 62%; }
     .small-collection { gap: 22px; }
     .postage-stamp { width: 83px; font-size: 8px; }
@@ -294,9 +295,9 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .page-bottom { left: 28px; right: 28px; }
     .welcome-note { margin: 20px 0 30px; }
     .welcome-note h2 { font-size: clamp(29px, 7.8vw, 44px); }
-    .welcome-note p { font-size: 14px; max-width: none; }
+    .welcome-note p { font-size: 14px; max-width: 60ch; }
     .pink-note { margin-top: 40px; }
-    .bottom-scraps { padding-top: 20px; padding-bottom: 25px; }
+    .bottom-scraps { padding-top: 32px; padding-bottom: 25px; }
     .hello-ticket strong { font-size: 20px; }
     .section-cover > .handwritten { margin-top: 35px; }
     .section-cover h2 { font-size: 43px; }
@@ -310,6 +311,36 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .kg-width-full, .kg-width-wide { width: 100%; max-width: 100%; margin-left: 0 !important; }
     .site-footer { flex-direction: column; align-items: center; text-align: center; gap: 8px; font-size: 8px; margin-top: 38px; }
 }
+@media (min-width: 700px) and (max-width: 1100px) {
+    .cover-page, .welcome-page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); column-gap: clamp(24px, 4vw, 44px); align-items: start; padding-bottom: 80px; }
+    .cover-page { grid-template-areas: "eyebrow eyebrow" "name collection" "note collection"; grid-template-rows: auto auto 1fr; min-height: 0; }
+    .cover-page > .page-eyebrow { grid-area: eyebrow; }
+    .cover-page > .name-collage { grid-area: name; max-width: none; margin-top: 32px; }
+    .cover-page > .name-note { grid-area: note; margin: 18px 0 0 5px; }
+    .cover-page > .cover-collection { grid-area: collection; width: 100%; margin: 40px 0 0; justify-self: center; }
+    .cover-page .first-name { font-size: clamp(62px, 8.9vw, 98px); }
+    .cover-page .middle-name { font-size: clamp(54px, 7.6vw, 82px); }
+    .cover-page .last-name { font-size: clamp(47px, 6.7vw, 72px); }
+    .welcome-page { grid-template-areas: "eyebrow eyebrow" "welcome note" "welcome scraps" "clippings clippings"; }
+    .welcome-page > .page-eyebrow { grid-area: eyebrow; }
+    .welcome-page > .welcome-note { grid-area: welcome; min-width: 0; margin: 26px 0 20px; }
+    .welcome-note h2 { font-size: clamp(31px, 4.7vw, 44px); }
+    .welcome-page > .pink-note { grid-area: note; min-width: 0; margin: 40px 8px 20px; }
+    .welcome-page .note-title { font-size: clamp(27px, 3.4vw, 34px); }
+    .welcome-page > .bottom-scraps { grid-area: scraps; }
+    .welcome-page > .clippings { grid-area: clippings; }
+    .section-cover { display: grid; grid-template-columns: minmax(0, 1fr) minmax(150px, 30%); grid-template-rows: auto auto auto 1fr; column-gap: clamp(24px, 4vw, 44px); align-items: start; }
+    .section-cover > .page-eyebrow { grid-column: 1 / -1; }
+    .section-cover > .handwritten { grid-column: 1; grid-row: 2; }
+    .section-cover > h2 { grid-column: 1; grid-row: 3; }
+    .section-cover > p { grid-column: 1; grid-row: 4; }
+    .section-cover > .about-portrait, .section-cover > .section-patch { grid-column: 2; grid-row: 2 / 5; justify-self: center; align-self: center; margin: 24px 0; }
+    .section-cover > .about-portrait { width: min(100%, 240px); }
+    .section-cover > .foil-writing { left: auto; right: 12px; bottom: 20px; }
+    html:not([data-mode="plain"]) .section-content > :is(.gh-content, .extra-links, .empty-note),
+    html:not([data-mode="plain"]) .section-content p { max-width: 70ch; }
+    html:not([data-mode="plain"]) .entry-card h3 { text-wrap: pretty; }
+}
 @media (max-width: 370px) {
     .desk { padding-inline: 10px; }
     .paper-page { padding-inline: 20px; }
@@ -318,12 +349,16 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .middle-name { font-size: 46px; }
     .last-name { font-size: 40px; }
     .page-eyebrow { font-size: 7px; }
+    .tiny-heading { font-size: clamp(16px, 5vw, 19px); }
     .hello-ticket strong { font-size: 17px; }
     .cover-collection { gap: 12px; }
     .postage-stamp { width: 72px; font-size: 7px; }
     .camp-patch { width: 80px; }
     .camp-patch img { width: 78px; }
     .camp-patch > span:not(.sr-only) { font-size: 9px; }
+    .welcome-badges { gap: 8px; }
+    .welcome-badges .camp-patch { width: 70px; }
+    .welcome-badges .camp-patch img { width: 62px; }
     .resume-scrap { font-size: 9px; }
     .note-title { font-size: 32px; }
     .secret-note summary .handwritten { font-size: 13px; }
@@ -333,8 +368,8 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
 .foil-sticker, .placed-sticker svg, .sticker-choice svg, .sticker-toggle svg { display: block; overflow: visible; filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff) drop-shadow(1px 3px 2px #3a2a1f66); }
 .foil-sticker { position: absolute; z-index: 4; width: 62px; height: 62px; pointer-events: none; transform: rotate(var(--r, -8deg)); }
 .foil-portrait { top: -14px; right: -18px; --r: 14deg; width: 58px; height: 58px; }
-.foil-note { right: 34px; bottom: 300px; --r: -12deg; width: 54px; height: 54px; }
-.foil-ticket { right: 22px; bottom: 210px; --r: 18deg; width: 48px; height: 48px; }
+.foil-note { right: -20px; bottom: -28px; --r: -12deg; width: 48px; height: 48px; }
+.foil-ticket { left: -30px; top: -23px; --r: 18deg; width: 42px; height: 42px; }
 .foil-about { top: 120px; right: 42px; --r: 10deg; width: 70px; height: 70px; }
 .foil-writing { bottom: 70px; left: 38px; --r: -18deg; }
 .foil-contact { bottom: 80px; right: 50px; --r: 12deg; width: 74px; height: 74px; }

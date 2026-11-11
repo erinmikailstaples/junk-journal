@@ -39,7 +39,7 @@ Run `npx playwright install chromium` once before the browser checks. They use t
 - The sticker sheet lets visitors drag metallic stickers onto the journal, or pick one to place it in the middle. Placed stickers are buttons: drag them, or use arrow keys (Shift for bigger steps) to move, R/Shift+R to rotate, and Delete to peel off. Stickers are saved per page in browser storage, capped at 30, announced to screen readers, and hidden in plain mode and print.
 - With JavaScript disabled, all five journal sections remain visible and navigation uses native anchors.
 - Plain mode exposes all the same sections as one readable document. It persists across pages when browser storage is available and reports when it cannot save. Its small early external script avoids a journal flash for returning plain-mode readers.
-- Self-hosted typefaces, visible focus indicators, a skip link, semantic headings, reduced-motion support, responsive layouts, and print styles are included. Desktop side tabs become top index tabs on small screens so they don't force horizontal scrolling.
+- Self-hosted typefaces, visible focus indicators, a skip link, semantic headings, reduced-motion support, responsive layouts, and print styles are included. Desktop side tabs become top index tabs on smaller screens; journal scraps rearrange for tablets and phones without forcing horizontal scrolling.
 - Ghost generates metadata via `ghost_head` and loads editor-card assets. Native third-party embeds and Portal may add their own assets on a live installation.
 
 ## Existing-site content
