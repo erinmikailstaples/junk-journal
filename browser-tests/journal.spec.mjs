@@ -26,6 +26,41 @@ test('journal fits small phones, tablets, and desktop without horizontal scrolli
     }
 });
 
+test('journal headings use the bundled font while plain headings remain plain', async ({ page }) => {
+    await page.goto('/');
+    const loadedFonts = await page.evaluate(async () =>
+        (await document.fonts.load('800 32px "Bricolage Grotesque"', 'AĄỡ')).map(font => font.status)
+    );
+    expect(loadedFonts).toEqual(['loaded', 'loaded', 'loaded']);
+    await expect(page.locator('.welcome-note h2')).toHaveCSS('font-family', /Bricolage Grotesque/);
+    await page.evaluate(() => document.documentElement.style.setProperty('--gh-font-heading', 'Georgia, serif'));
+    await expect(page.locator('.welcome-note h2')).toHaveCSS('font-family', 'Georgia, serif');
+    await page.evaluate(() => document.documentElement.style.removeProperty('--gh-font-heading'));
+    await page.locator('.mode-toggle').click();
+    await expect(page.locator('.welcome-note h2')).toHaveCSS('font-family', 'Arial, sans-serif');
+});
+
+test('the note decoration does not overlap its heading', async ({ page }) => {
+    for (const width of [320, 390, 550, 768, 1024, 1101, 1200, 1440]) {
+        await page.setViewportSize({ width, height: 1000 });
+        await page.goto('/');
+        await page.evaluate(() => document.fonts.ready);
+        const overlaps = await page.locator('.pink-note').evaluate(note => {
+            const title = note.querySelector('.note-title');
+            const decoration = note.querySelector('.note-doodle').getBoundingClientRect();
+            return [...title.childNodes].filter(node => node.nodeType === Node.TEXT_NODE).some(node => {
+                const range = document.createRange();
+                range.selectNodeContents(node);
+                return [...range.getClientRects()].some(rect =>
+                    rect.left < decoration.right && rect.right > decoration.left &&
+                    rect.top < decoration.bottom && rect.bottom > decoration.top
+                );
+            });
+        });
+        expect(overlaps, `${width}px`).toBe(false);
+    }
+});
+
 test('scraps, keyboard envelope, focus, history, and persisted plain mode work', async ({ page }) => {
     await page.goto('/');
     await page.locator('.portrait-print').click();
