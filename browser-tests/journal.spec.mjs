@@ -26,6 +26,110 @@ test('journal fits small phones, tablets, and desktop without horizontal scrolli
     }
 });
 
+test('condensed journal pages keep their scraps composed at each breakpoint', async ({ page }) => {
+    for (const width of [700, 768, 1024, 1100]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto('/');
+        await page.evaluate(() => document.fonts.ready);
+        const name = await page.locator('.last-name').boundingBox();
+        const portrait = await page.locator('.portrait-print').boundingBox();
+        expect(portrait.x, `${width}px portrait`).toBeGreaterThan(name.x + name.width);
+        expect(portrait.y, `${width}px portrait`).toBeLessThan(name.y + name.height);
+
+        const welcome = await page.locator('.welcome-note').boundingBox();
+        const note = await page.locator('.pink-note').boundingBox();
+        expect(note.x, `${width}px note`).toBeGreaterThan(welcome.x + welcome.width);
+        expect(note.y, `${width}px note`).toBeLessThan(welcome.y + welcome.height);
+        const star = await page.locator('.foil-note').boundingBox();
+        expect(Math.abs(star.y + star.height / 2 - (note.y + note.height)), `${width}px foil star`).toBeLessThan(35);
+        expect(await page.locator('.welcome-note h2 em').evaluate(element => element.getClientRects().length), `${width}px headline`).toBe(1);
+
+        for (const section of ['about', 'writing', 'projects', 'contact']) {
+            await page.locator(`.index-tabs [data-section="${section}"]`).click();
+            await expect(page.locator(`#${section}-title`)).toBeVisible();
+            const title = await page.locator(`#${section}-title`).boundingBox();
+            const artwork = await page.locator(`#${section} .section-cover img`).boundingBox();
+            expect(artwork.x, `${width}px ${section} artwork`).toBeGreaterThan(title.x + title.width);
+            expect(artwork.y, `${width}px ${section} artwork`).toBeLessThan(title.y + title.height);
+        }
+    }
+
+    for (const width of [320, 390, 600, 699]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto('/');
+        const name = await page.locator('.last-name').boundingBox();
+        const portrait = await page.locator('.portrait-print').boundingBox();
+        expect(portrait.y, `${width}px portrait`).toBeGreaterThan(name.y + name.height);
+    }
+});
+
+test('small phones keep the welcome patches in one row', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 900 });
+    await page.goto('/');
+    await page.evaluate(() => document.fonts.ready);
+    const patches = await page.locator('.welcome-badges .camp-patch').all();
+    const boxes = await Promise.all(patches.map(patch => patch.boundingBox()));
+    expect(Math.max(...boxes.map(box => box.y)) - Math.min(...boxes.map(box => box.y))).toBeLessThan(20);
+    for (const box of boxes) expect(box.width).toBeGreaterThanOrEqual(44);
+    const logo = await page.locator('.wordmark').boundingBox();
+    const star = await page.locator('.wordmark > span[aria-hidden]').boundingBox();
+    expect(star.y).toBeLessThan(logo.y + logo.height / 2);
+    for (const selector of ['.tiny-heading', '.resume-scrap']) {
+        const lines = await page.locator(selector).evaluate(element => {
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            return range.getClientRects().length;
+        });
+        expect(lines, selector).toBe(1);
+    }
+});
+
+test('condensed plain mode stays a single readable document', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await page.goto('/');
+    await page.locator('.mode-toggle').click();
+    await expect(page.locator('.cover-page')).toHaveCSS('display', 'block');
+    await expect(page.locator('.welcome-page')).toHaveCSS('display', 'block');
+    await expect(page.locator('.section-cover').first()).toHaveCSS('display', 'block');
+    await expect(page.locator('.welcome-note h2')).toHaveCSS('font-size', '30px');
+    const maxWidth = await page.locator('#about .section-content').evaluate(section => {
+        const content = document.createElement('article');
+        content.className = 'gh-content';
+        section.append(content);
+        return getComputedStyle(content).maxWidth;
+    });
+    expect(maxWidth).toBe('none');
+});
+
+test('tablet article titles do not leave their arrows on a line alone', async ({ page }) => {
+    for (const width of [700, 768, 1024]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto('/#projects');
+        await page.evaluate(() => document.fonts.ready);
+        const distance = await page.locator('#projects .entry-card h3').first().evaluate(title => {
+            const text = title.firstChild;
+            const lastWord = text.textContent.match(/\S+\s*$/u);
+            const range = document.createRange();
+            range.setStart(text, lastWord.index);
+            range.setEnd(text, text.textContent.length);
+            return Math.abs(range.getBoundingClientRect().top - title.querySelector('span').getBoundingClientRect().top);
+        });
+        expect(distance, `${width}px`).toBeLessThan(8);
+    }
+});
+
+test('sticky tabs leave the selected section visible', async ({ page }) => {
+    for (const width of [390, 1024]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto('/');
+        await page.locator('.index-tabs [data-section="about"]').click();
+        await expect(page.locator('#about-title')).toBeFocused();
+        const tabs = await page.locator('.index-tabs').boundingBox();
+        const eyebrow = await page.locator('#about .page-eyebrow').boundingBox();
+        expect(eyebrow.y, `${width}px section heading`).toBeGreaterThanOrEqual(tabs.y + tabs.height - 1);
+    }
+});
+
 test('journal headings use the bundled font while plain headings remain plain', async ({ page }) => {
     await page.goto('/');
     const loadedFonts = await page.evaluate(async () =>
@@ -40,7 +144,7 @@ test('journal headings use the bundled font while plain headings remain plain', 
     await expect(page.locator('.welcome-note h2')).toHaveCSS('font-family', 'Arial, sans-serif');
 });
 
-test('the note decoration does not overlap its heading', async ({ page }) => {
+test('decorations do not overlap note or ticket text', async ({ page }) => {
     for (const width of [320, 390, 550, 768, 1024, 1101, 1200, 1440]) {
         await page.setViewportSize({ width, height: 1000 });
         await page.goto('/');
@@ -58,6 +162,20 @@ test('the note decoration does not overlap its heading', async ({ page }) => {
             });
         });
         expect(overlaps, `${width}px`).toBe(false);
+        const foilOverlaps = await page.evaluate(() => {
+            const decorations = [...document.querySelectorAll('.foil-note, .foil-ticket')]
+                .map(element => element.getBoundingClientRect());
+            const labels = document.querySelectorAll('.pink-note .note-label, .pink-note .note-title, .pink-note .note-link, .hello-ticket > span, .hello-ticket > strong');
+            return [...labels].some(label => {
+                const range = document.createRange();
+                range.selectNodeContents(label);
+                return [...range.getClientRects()].some(rect => decorations.some(decoration =>
+                    rect.left < decoration.right && rect.right > decoration.left &&
+                    rect.top < decoration.bottom && rect.bottom > decoration.top
+                ));
+            });
+        });
+        expect(foilOverlaps, `${width}px foil`).toBe(false);
     }
 });
 
