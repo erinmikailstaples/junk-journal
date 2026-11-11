@@ -4,7 +4,7 @@ A Ghost 5+ theme for Erin Mikail Staples. A scrappy camp scrapbook: woven pink c
 
 ## Install in Ghost
 
-1. Run `npm ci`, then `npm run zip`.
+1. Use Node.js 24 LTS, run `npm ci`, then `npm run zip`.
 2. Upload `dist/erin-junk-journal.zip` in Ghost Admin → Settings → Design & branding → Change theme → Upload theme, then activate it.
 3. Set the publication title, description, language, and icon in Ghost Admin.
 4. In the theme's design settings, edit **Introduction**, **Contact email**, and optionally **Portrait**. The bundled portrait and contact address come from Erin's existing public site. Clear the email to hide its link.
@@ -13,6 +13,59 @@ A Ghost 5+ theme for Erin Mikail Staples. A scrappy camp scrapbook: woven pink c
 7. Ghost primary navigation appears as extra links on About. Secondary navigation appears on Contact, suitable for verified social/profile links. The five journal tabs are intentionally fixed; edit `partials/navigation.hbs` and matching section IDs to change them.
 
 Writing shows the six latest posts; projects shows the six latest experiments. Writing's pagination leads to older entries in the archive; the archive's first page is the homepage's Writing section. No custom routes are required. Tag and author archives, individual posts/pages, pagination, member access through Ghost's native content helper, editor cards, and native comments are supported. Membership, email, and comments require a configured Ghost instance. Ghost page-builder settings control the title and feature image on standalone pages.
+
+## Porting the existing site
+
+The public [sitemap index](https://www.erinmikailstaples.com/sitemap.xml) and all four child sitemaps were reviewed on **2026-11-11**. The site already runs Ghost, so switching its theme does not require reimporting content or changing URLs.
+
+| Existing URLs | Count | Theme support |
+| --- | ---: | --- |
+| Homepage | 1 | `home.hbs`, with the journal and plain mode |
+| Standalone pages | 12 | `page.hbs`, preserving each page's slug, editor content, and title/image display setting |
+| Posts | 62 | `post.hbs`, with native content, tags, authors, access handling, and comments |
+| Tag archives | 65 | `tag.hbs` and native pagination |
+| Author archives | 1 | `author.hbs` at `/author/erin/` |
+
+The existing page URLs are `/resume/`, `/about/`, `/tools/`, `/links/`, `/strangeloop-2023/`, `/newsletter/`, `/coming-from/`, `/now/`, `/codeland-2022/`, `/personal-updates/`, `/words/`, and `/humor/`. They remain standalone pages, not redirects to journal tabs. In particular, `/words/` is an existing curated page and `/tag/all-posts/` remains the full post archive. The current primary navigation (All Posts, Now, Events, Resume) is supplied by Ghost and appears on the journal's About page. The theme's own resume links use the current Ghost site URL, including on staging.
+
+The public `/about/`, `/tools/`, `/links/`, and `/newsletter/` pages currently have no rendered editor body. The new theme does not invent replacement content or a newsletter signup flow. Fill those pages in Ghost if desired; the journal's About tab already has a fallback bio when the About page is empty. Ghost Portal and membership settings remain managed in Ghost.
+
+Before the first activation:
+
+1. Export content and back up the active theme, navigation, custom settings, code injection, `routes.yaml`, and redirects from Ghost Admin. Keep the existing domain and permalink settings. This repository does not replace routes or redirects.
+2. Upload to a staging Ghost site first if available. Check the resume's long content and embeds, both older and newer posts, all standalone pages above, tag/author pagination, member-only content, comments, and Portal/signup behavior. Re-select any old theme-specific custom page templates that do not exist in this theme. The public sitemap cannot reveal private pages, unpublished content, custom routing configuration, or Admin-only template assignments.
+3. Configure this theme's introduction, contact email, portrait, and any Ghost font overrides. Theme-specific settings from the previous theme are not automatically equivalent.
+4. Activate in Ghost Admin, then check both journal and plain mode at the live URLs. To roll back, activate the previous theme. Uploading a theme does not migrate or overwrite posts, pages, media, members, navigation, or routing configuration.
+
+If moving to a *different* Ghost installation, content/media/settings migration is a separate step; a theme ZIP contains presentation, not a backup of the publication.
+
+`scripts/fixtures/site-pages.json` records the audited page slugs and primary navigation for offline preview checks. Preview bodies are labeled placeholders, not copies of the live pages. These checks exercise the theme templates; they do not replace a real Ghost staging check.
+
+## GitHub Actions uploads
+
+`.github/workflows/ghost-theme.yml` runs unit/package checks, Chromium interaction and accessibility checks, Ghost **5 and 6** validation, packaging, and validation of the resulting ZIP on pull requests and pushes to `main`. Each successful run retains the installable ZIP as an artifact for 14 days. Pull requests never receive Ghost credentials or upload a theme.
+
+Checks use Node.js 24 LTS and GScan's API directly, so compatibility errors and archive-reading failures fail CI rather than being swallowed by the GScan CLI.
+
+After checks pass on `main`, the workflow uploads the exact validated ZIP using [Ghost's official deployment action](https://github.com/TryGhost/action-deploy-theme). A manual workflow run also works, but uploads are restricted to `main`. Actions are pinned to immutable commit hashes, the GitHub token is read-only, and uploads are serialized.
+
+### One-time setup
+
+1. Ensure the Ghost hosting plan supports custom themes. In the target site's Ghost Admin, create a custom integration under **Settings > Integrations**.
+2. In this GitHub repository, create an environment named **`ghost-production`** under **Settings > Environments**. Optionally add required reviewers and restrict deployment branches to `main`.
+3. Add these environment secrets (repository Actions secrets also work):
+
+   | Secret | Value |
+   | --- | --- |
+   | `GHOST_ADMIN_API_URL` | The HTTPS API URL copied from the custom integration, including the correct Ghost admin host. Do not use `https://ghost.org` or guess the host from the public domain. |
+   | `GHOST_ADMIN_API_KEY` | The **Admin API key**, not the Content API key, from that integration. |
+
+4. Merge the PR. Alternatively, open **Actions > Theme checks and Ghost upload > Run workflow** and select `main`.
+5. After a successful upload, open **Ghost Admin > Settings > Design & branding > Change theme** and manually activate the uploaded version.
+
+**Activation is deliberately manual for every new commit.** Uploads are named `erin-junk-journal-<full-commit-SHA>.zip`, giving each revision a separate theme identity instead of overwriting the active theme. Ghost's deploy action only uploads; this workflow never calls the activation endpoint. Each revision is a new theme, so review/reapply its theme-specific design settings before activation. Keep a known-good version for rollback and periodically remove obsolete inactive themes in Ghost. Re-running the same commit replaces that commit's upload, so use a new commit for changes rather than overwriting an active revision.
+
+Missing credentials fail the upload job with an explicit setup error; validation and the downloadable theme artifact still run. Never put API keys in Git, workflow inputs, issues, or chat. No live upload can be verified until the integration secrets are configured.
 
 ## Preview and develop
 
@@ -28,6 +81,7 @@ npm test       # navigation, history, focus, plain mode, storage failure
 npm run test:browser # Chromium responsive, keyboard, no-JS, axe accessibility checks
 npm run check  # Ghost theme validation with GScan
 npm run zip    # uploadable theme, without development dependencies
+npm run check:zip # validate the packaged theme against Ghost 5 and 6
 ```
 
 Run `npx playwright install chromium` once before the browser checks. They use their own preview server on port 2468 and save screenshots in `test-results/`. Automated checks supplement, rather than replace, manual assistive-technology testing.
