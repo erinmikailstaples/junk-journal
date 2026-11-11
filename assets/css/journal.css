@@ -61,12 +61,12 @@ main:focus { outline: none; }
 .spread > .paper-page:last-child { background-color: #e9e3d3; background-image: radial-gradient(ellipse at 95% 90%, #a28a5633, transparent 50%), linear-gradient(90deg, transparent 23px, #b0476e40 23px, #b0476e40 25px, transparent 25px), repeating-linear-gradient(0deg, transparent, transparent 27px, #586dd520 27px, #586dd520 28px); box-shadow: inset 25px 0 20px -24px #0008; }
 .page-eyebrow { font-family: "Courier New", monospace; font-size: 9px; line-height: 1.5; letter-spacing: .015em; display: flex; justify-content: space-between; gap: 10px; font-weight: bold; border-bottom: 2px solid #171717; padding-bottom: 10px; }
 .page-eyebrow > span[aria-hidden] { font-size: 22px; line-height: .65; }
-.name-collage { margin: 24px 0 0; font-weight: normal; line-height: 1; text-transform: uppercase; position: relative; z-index: 1; }
+.name-collage { display: flex; flex-direction: column; align-items: flex-start; margin: 24px 0 0; font-weight: normal; line-height: 1; text-transform: uppercase; position: relative; z-index: 1; }
 .name-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
 .name-collage > span[aria-hidden] { display: flex; align-items: center; flex-wrap: nowrap; width: fit-content; position: relative; filter: drop-shadow(0 0 .6px #2a1d1299) drop-shadow(.6px 1px .4px #2a1d1240) drop-shadow(0 0 3px #8a6d3a40); }
-.first-name { font-size: clamp(66px, 7.4vw, 104px); margin-left: 4px; }
-.middle-name { font-size: clamp(56px, 6.3vw, 88px); margin: 6px 0 0 30px; }
-.last-name { font-size: clamp(50px, 5.6vw, 78px); margin-top: 8px; }
+.first-name { font-size: clamp(66px, 7.4vw, 104px); }
+.middle-name { font-size: clamp(56px, 6.3vw, 88px); margin-top: -6px; }
+.last-name { font-size: clamp(50px, 5.6vw, 78px); margin-top: -8px; }
 .cut { display: inline-block; position: relative; padding: .06em .1em .04em; margin: 0 .015em; line-height: 1; color: #171717; background-color: #f6f2e6; box-shadow: inset 0 0 0 1px #ffffff4d, inset 0 -3px 4px #0000001c, inset 2px 0 3px #ffffff26; transform: rotate(var(--r, 0deg)) translateY(var(--y, 0)); clip-path: polygon(3% 0, 97% 4%, 100% 92%, 94% 100%, 0 97%); }
 .cut:nth-child(3n) { clip-path: polygon(0 5%, 92% 0, 100% 100%, 6% 95%); --y: .05em; }
 .cut:nth-child(3n+1) { clip-path: polygon(6% 3%, 100% 0, 96% 96%, 0 100%); --y: -.04em; }
@@ -243,7 +243,7 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .desk { padding: 20px 80px 20px 25px; }
     .paper-page { padding-inline: 25px; }
     .first-name { font-size: 76px; }
-    .middle-name { font-size: 62px; margin-left: 14px; }
+    .middle-name { font-size: 62px; }
     .last-name { font-size: 54px; }
     .name-note { font-size: 12px; margin-left: 22px; }
     .round-sticker { width: 87px; height: 87px; font-size: 15px; }
@@ -278,9 +278,9 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .spread > .paper-page:first-child { border-right: 0; border-bottom: 1px solid var(--line); box-shadow: none; }
     .spread > .paper-page:last-child { box-shadow: none; }
     .cover-page { min-height: 720px; }
-    .name-collage { max-width: 380px; margin: 30px auto 0; }
+    .name-collage { max-width: 380px; margin: 30px 0 0; }
     .first-name { font-size: clamp(56px, 15vw, 104px); }
-    .middle-name { font-size: clamp(46px, 12.5vw, 88px); margin-left: 25px; }
+    .middle-name { font-size: clamp(46px, 12.5vw, 88px); }
     .last-name { font-size: clamp(40px, 11vw, 78px); }
     .name-note { font-size: 13px; margin-left: 5px; }
     .cover-collection { max-width: 370px; margin: 32px auto 20px; gap: 20px; }
@@ -313,7 +313,7 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .paper-page { padding-inline: 20px; }
     .name-note { font-size: 12px; margin-left: 10px; }
     .first-name { font-size: 56px; }
-    .middle-name { font-size: 46px; margin-left: 12px; }
+    .middle-name { font-size: 46px; }
     .last-name { font-size: 40px; }
     .page-eyebrow { font-size: 7px; }
     .hello-ticket strong { font-size: 17px; }
