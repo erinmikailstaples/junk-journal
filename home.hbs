@@ -14,8 +14,8 @@
                     <span class="hover-label">meet the human behind the tabs ↗</span>
                 </a>
                 <div class="small-collection">
-                    <span class="postage-stamp" aria-hidden="true"><span>DEVELOPER<br>EDUCATOR<br>COMEDIAN</span><span class="stamp-star">★</span><span>100% HUMAN</span></span>
-                    <a class="round-sticker" href="#projects" data-section-link>MAKE<br>SHIT.<br><em>learn stuff.</em><span class="sr-only"> Explore things I make</span></a>
+                    <a class="camp-patch" href="#about" data-section-link><img src="{{asset "images/patch-about.png"}}" width="256" height="256" alt="" aria-hidden="true"><span>meet the human</span><span class="sr-only"> — about Erin</span></a>
+                    <a class="camp-patch" href="#projects" data-section-link><img src="{{asset "images/patch-campfire.png"}}" width="256" height="256" alt="" aria-hidden="true"><span>making a little trouble</span><span class="sr-only"> — explore things I make</span></a>
                     <a class="resume-scrap" href="https://www.erinmikailstaples.com/resume/">the résumé ↗</a>
                     <span class="handwritten arrow-note" aria-hidden="true">yes, you can<br>touch stuff. ⤴</span>
                 </div>
@@ -27,6 +27,11 @@
             <div class="welcome-note">
                 <span class="handwritten tiny-heading">the internet should be weirder.</span>
                 <h2><span>CODE.</span><br><span>COMMUNITY.</span><br><em>A LITTLE CHAOS.</em></h2>
+                <div class="welcome-badges">
+                    <a class="camp-patch" href="#writing" data-section-link><img src="{{asset "images/patch-writing.png"}}" width="256" height="256" alt="" aria-hidden="true"><span>write it down</span><span class="sr-only"> — words &amp; ideas</span></a>
+                    <a class="camp-patch" href="#projects" data-section-link><img src="{{asset "images/patch-projects.png"}}" width="256" height="256" alt="" aria-hidden="true"><span>make a mess</span><span class="sr-only"> — things I make</span></a>
+                    <a class="camp-patch" href="#contact" data-section-link><img src="{{asset "images/patch-contact.png"}}" width="256" height="256" alt="" aria-hidden="true"><span>say hey</span><span class="sr-only"> — contact Erin</span></a>
+                </div>
                 <p>{{@custom.introduction}}</p>
                 <p class="welcome-signoff">Part field notes. Part experiment. Part “is this thing on?”<br>Pick a tab. Pull a thread. Make yourself at home.</p>
             </div>
@@ -74,7 +79,7 @@
             <span class="handwritten">from the margins of my brain</span>
             <h2 id="writing-title">THINKING<br><em>OUT LOUD.</em></h2>
             <p>Developer experience, AI, tutorials, and the occasional bad joke. Learn something. Break something. Tell me what happened.</p>
-            <span class="big-asterisk" aria-hidden="true">✳</span>
+            <img class="section-patch" src="{{asset "images/patch-writing.png"}}" width="256" height="256" alt="" aria-hidden="true" loading="lazy">
         </div>
         <div class="paper-page section-content">
             <span class="page-eyebrow">THE LATEST ENTRIES</span>
@@ -91,7 +96,7 @@
             <span class="handwritten">a little trial. a little error.</span>
             <h2 id="projects-title">FUCK AROUND.<br><em>FIND THINGS OUT.</em></h2>
             <p>Demos, tutorials, experiments, and the occasional “I wonder what happens if…”</p>
-            <span class="project-sticker" aria-hidden="true">LESS GATEKEEPING.<br>MORE<br><em>making things.</em></span>
+            <img class="section-patch" src="{{asset "images/patch-projects.png"}}" width="256" height="256" alt="" aria-hidden="true" loading="lazy">
         </div>
         <div class="paper-page section-content">
             <span class="page-eyebrow">COLLECTED EXPERIMENTS</span>
@@ -109,7 +114,7 @@
             <span class="page-eyebrow">05 / LEAVE A LITTLE NOTE</span>
             <span class="handwritten">the internet is better with people</span>
             <h2 id="contact-title">GOOD PEOPLE.<br>WEIRD IDEAS.<br><em>SAY HEY.</em></h2>
-            <span class="contact-heart" aria-hidden="true">♡</span>
+            <img class="section-patch" src="{{asset "images/patch-contact.png"}}" width="256" height="256" alt="" aria-hidden="true" loading="lazy">
         </div>
         <div class="paper-page section-content contact-content">
             {{#get "pages" filter="slug:contact" limit="1"}}

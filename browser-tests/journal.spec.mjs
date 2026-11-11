@@ -47,6 +47,36 @@ test('scraps, keyboard envelope, focus, history, and persisted plain mode work',
     await expect(page.locator('html')).toHaveAttribute('data-mode', 'journal');
 });
 
+test('fabric index tabs work without patch artwork and plain mode hides decoration', async ({ page }) => {
+    await page.route('**/assets/images/patch-*.png', route => route.abort());
+    await page.goto('/');
+    const navigation = page.getByRole('navigation', { name: 'Journal navigation' });
+    for (const [section, label] of [['home', 'the journal'], ['about', 'about me'], ['writing', 'words & ideas'], ['projects', 'things I make'], ['contact', 'say hello']]) {
+        const link = navigation.getByRole('link', { name: label, exact: true });
+        await expect(link).toBeVisible();
+        await link.focus();
+        await page.keyboard.press('Enter');
+        await expect(page.locator(`#${section}`)).toBeVisible();
+        await expect(link).toHaveAttribute('aria-current', 'location');
+    }
+    await page.locator('.mode-toggle').click();
+    await expect(navigation.locator('a')).toHaveCount(5);
+    await expect(navigation.locator('.tab-number:visible')).toHaveCount(0);
+    await expect(page.locator('.section-patch:visible')).toHaveCount(0);
+    await expect(navigation.getByRole('link', { name: 'words & ideas', exact: true })).toBeVisible();
+});
+
+test('welcome patches navigate to their matching journal sections', async ({ page }) => {
+    await page.goto('/');
+    for (const section of ['writing', 'projects', 'contact']) {
+        await page.locator(`.welcome-badges a[href="#${section}"]`).click();
+        await expect(page.locator(`#${section}-title`)).toBeFocused();
+        await page.locator('.index-tabs [data-section="home"]').click();
+    }
+    await page.locator('.mode-toggle').click();
+    await expect(page.locator('.welcome-badges')).toBeHidden();
+});
+
 test('all sections remain readable without JavaScript', async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const page = await context.newPage();
