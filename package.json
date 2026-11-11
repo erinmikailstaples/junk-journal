@@ -1,0 +1,50 @@
+{
+  "name": "erin-junk-journal",
+  "version": "1.0.0",
+  "description": "Code, community, and a little chaos. An accessible punk-rock scrapbook Ghost theme for Erin Mikail Staples.",
+  "author": {
+    "name": "Erin Mikail Staples",
+    "email": "erin@erinmikailstaples.com"
+  },
+  "license": "MIT",
+  "engines": {
+    "ghost": ">=5.0.0"
+  },
+  "scripts": {
+    "dev": "node scripts/preview.mjs",
+    "test": "node --test test/*.test.mjs",
+    "test:browser": "playwright test",
+    "check": "gscan .",
+    "zip": "node scripts/package.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "^1.56.0",
+    "gscan": "^4.0.0",
+    "handlebars": "^4.7.8",
+    "jsdom": "^26.0.0"
+  },
+  "config": {
+    "posts_per_page": 6,
+    "image_sizes": {
+      "small": { "width": 400 },
+      "medium": { "width": 800 },
+      "large": { "width": 1600 }
+    },
+    "custom": {
+      "introduction": {
+        "type": "text",
+        "default": "Developer Experience Engineer. Educator. Stand-up comedian. Brooklyn, NYC, by way of Reno, NV. Bridging code, content, and community — preferably without making any of it boring."
+      },
+      "contact_email": {
+        "type": "text",
+        "default": "erin@erinmikailstaples.com"
+      },
+      "portrait": {
+        "type": "image"
+      }
+    },
+    "card_assets": true
+  },
+  "keywords": ["ghost-theme", "journal", "portfolio", "accessible"]
+}

@@ -1,0 +1,6 @@
+{{!< default}}
+<section class="archive paper-page">
+    {{#tag}}<span class="page-eyebrow">FILED UNDER</span><h1>{{name}}</h1>{{#if description}}<p>{{description}}</p>{{/if}}{{/tag}}
+    <div class="archive-grid">{{#foreach posts}}{{> "post-card"}}{{else}}<p>Nothing filed here just yet.</p>{{/foreach}}</div>
+    {{pagination}}
+</section>
