@@ -66,6 +66,33 @@ test('fabric index tabs work without patch artwork and plain mode hides decorati
     await expect(navigation.getByRole('link', { name: 'words & ideas', exact: true })).toBeVisible();
 });
 
+test('desktop index tabs have a visible backing attached to the journal edge', async ({ page }) => {
+    for (const width of [1101, 1440, 1920]) {
+        await page.setViewportSize({ width, height: 1000 });
+        await page.goto('/');
+        const tabs = await page.locator('.index-tab').evaluateAll(elements => {
+            const edge = document.querySelector('.journal').getBoundingClientRect().right;
+            return elements.map(element => {
+                const bounds = element.getBoundingClientRect();
+                return {
+                    left: bounds.left,
+                    right: bounds.right,
+                    height: bounds.height,
+                    edge,
+                    background: getComputedStyle(element).backgroundColor
+                };
+            });
+        });
+        for (const tab of tabs) {
+            expect(tab.left).toBeLessThanOrEqual(tab.edge);
+            expect(tab.right).toBeGreaterThan(tab.edge);
+            expect(tab.right).toBeLessThanOrEqual(width);
+            expect(tab.height).toBeGreaterThanOrEqual(44);
+            expect(tab.background).not.toBe('rgba(0, 0, 0, 0)');
+        }
+    }
+});
+
 test('welcome patches navigate to their matching journal sections', async ({ page }) => {
     await page.goto('/');
     for (const section of ['writing', 'projects', 'contact']) {

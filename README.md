@@ -1,6 +1,6 @@
 # Erin's junk journal
 
-A Ghost 5+ theme for Erin Mikail Staples. A scrappy camp scrapbook: woven pink canvas, worn paper, torn cut-out type, translucent masking tape, thread binding, a tucked-in photo, embroidered merit patches, and numbered fabric index tabs. Plus a cheeky plain-site alternative. No runtime framework, tracking, third-party fonts, or external image requests by default.
+A Ghost 5+ theme for Erin Mikail Staples. A scrappy camp scrapbook: woven pink canvas, worn paper, torn cut-out type, translucent masking tape, thread binding, a tucked-in photo, embroidered merit patches, and stitched, numbered index tabs tucked into the page edge. Plus a cheeky plain-site alternative. No runtime framework, tracking, third-party fonts, or external image requests by default.
 
 ## Install in Ghost
 
