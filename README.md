@@ -89,7 +89,7 @@ Run `npx playwright install chromium` once before the browser checks. They use t
 ## Interaction and accessibility
 
 - The numbered fabric index tabs and scrapbook patches are real links. Labels are live text, not baked into images; decorative artwork is hidden from assistive technology and removed in plain mode. Keyboard, touch, browser Back/Forward, deep links, and opening in a new tab work. Navigation places focus on the new section heading.
-- The envelope opens with native `details`/`summary`; no essential information is hover-only. Portraits have descriptive alternative text and decorative elements are hidden from assistive technology.
+- The lightbulb note appears on hover and can be opened by click, touch, or keyboard using native `details`/`summary`. Escape dismisses it; without JavaScript it remains clickable. Portraits have descriptive alternative text and decorative elements are hidden from assistive technology.
 - The sticker sheet lets visitors drag metallic stickers onto the journal, or pick one to place it in the middle. Placed stickers are buttons: drag them, or use arrow keys (Shift for bigger steps) to move, R/Shift+R to rotate, and Delete to peel off. Stickers are saved per page in browser storage, capped at 30, announced to screen readers, and hidden in plain mode and print.
 - With JavaScript disabled, all five journal sections remain visible and navigation uses native anchors.
 - Plain mode exposes all the same sections as one readable document. It persists across pages when browser storage is available and reports when it cannot save. Its small early external script avoids a journal flash for returning plain-mode readers.
