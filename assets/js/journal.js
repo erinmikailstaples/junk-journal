@@ -4,11 +4,11 @@
     const status = document.querySelector('.mode-status');
     const pages = Array.from(document.querySelectorAll('[data-journal-page]'));
     const tabs = Array.from(document.querySelectorAll('[data-section]'));
-    const renoVideos = [];
+    const videos = [];
 
-    function setupRenoVideos() {
-        const videoUrl = new URL('https://www.youtube.com/embed/F7F67QGlaaY');
-        videoUrl.searchParams.set('start', '107');
+    function setupVideos(config) {
+        const videoUrl = new URL(`https://${config.host || 'www.youtube.com'}/embed/${config.id}`);
+        if (config.start) videoUrl.searchParams.set('start', config.start);
         videoUrl.searchParams.set('autoplay', '1');
         videoUrl.searchParams.set('mute', '0');
         videoUrl.searchParams.set('playsinline', '1');
@@ -17,27 +17,33 @@
 
         document.querySelectorAll('[data-reno-introduction]').forEach((introduction, index) => {
             const paragraph = introduction.querySelector('p');
-            const text = paragraph.textContent;
-            const match = /\bReno(?:,\s*|\s+)(?:NV|Nevada)\b/i.exec(text);
+            const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
+            let textNode;
+            let match;
+            while ((textNode = walker.nextNode())) {
+                match = config.pattern.exec(textNode.data);
+                if (match) break;
+            }
             if (!match) return;
+            const text = textNode.data;
 
             const trigger = document.createElement('button');
             trigger.type = 'button';
-            trigger.className = 'reno-video-trigger';
+            trigger.className = `${config.name}-video-trigger`;
             trigger.textContent = match[0];
             trigger.setAttribute('aria-label', `${match[0]} (play video)`);
             trigger.setAttribute('aria-expanded', 'false');
 
             const panel = document.createElement('div');
-            panel.className = 'reno-video-panel';
-            panel.id = `reno-video-${index + 1}`;
+            panel.className = `${config.name}-video-panel`;
+            panel.id = `${config.name}-video-${index + 1}`;
             panel.hidden = true;
             trigger.setAttribute('aria-controls', panel.id);
 
             const head = document.createElement('div');
             head.className = 'reno-video-head';
             const title = document.createElement('strong');
-            title.textContent = 'A Reno detour';
+            title.textContent = config.title;
             const actions = document.createElement('div');
             actions.className = 'reno-video-actions';
             const playButton = document.createElement('button');
@@ -54,8 +60,8 @@
             head.append(title, actions);
 
             const frame = document.createElement('iframe');
-            frame.className = 'reno-video-frame';
-            frame.title = "Overly Excited Tourist Finds Reno's Secret Wonders";
+            frame.className = `${config.name}-video-frame`;
+            frame.title = config.videoTitle;
             frame.allow = 'autoplay; encrypted-media; picture-in-picture; web-share';
             frame.referrerPolicy = 'strict-origin-when-cross-origin';
             frame.setAttribute('allowfullscreen', '');
@@ -64,16 +70,17 @@
             help.className = 'reno-video-help';
             help.append("If the video doesn't start, press Play or ");
             const link = document.createElement('a');
-            link.href = 'https://www.youtube.com/watch?v=F7F67QGlaaY&t=107s';
-            link.textContent = 'watch on YouTube at 1:47';
+            link.href = config.link;
+            link.textContent = config.linkText;
             help.append(link, '.');
             panel.append(head, frame, help);
-            paragraph.replaceChildren(text.slice(0, match.index), trigger, text.slice(match.index + match[0].length));
+            textNode.replaceWith(text.slice(0, match.index), trigger, text.slice(match.index + match[0].length));
             introduction.append(panel);
 
             let pinned = false;
             let dismissOnPointerLeave = false;
             let suppressHover = false;
+            let rain = null;
 
             function requestPlayback() {
                 frame.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), videoUrl.origin);
@@ -84,6 +91,8 @@
                 const returnFocus = restoreFocus && panel.contains(document.activeElement) && !introduction.closest('[hidden]');
                 panel.hidden = true;
                 frame.removeAttribute('src');
+                rain?.remove();
+                rain = null;
                 trigger.setAttribute('aria-expanded', 'false');
                 pinned = false;
                 dismissOnPointerLeave = false;
@@ -93,10 +102,24 @@
 
             function open({ persist = false, pointer = false } = {}) {
                 if (panel.hidden) {
-                    renoVideos.forEach(video => video.close({ restoreFocus: true }));
+                    videos.forEach(video => video.close({ restoreFocus: true }));
                     panel.hidden = false;
                     trigger.setAttribute('aria-expanded', 'true');
                     frame.src = videoUrl.href;
+                    if (config.rain) {
+                        rain = document.createElement('div');
+                        rain.className = 'new-york-rain';
+                        rain.setAttribute('aria-hidden', 'true');
+                        const emojis = ['🥯', '🚕', '🍎', '🗽'];
+                        for (let i = 0; i < 20; i++) {
+                            const emoji = document.createElement('span');
+                            emoji.textContent = emojis[i % emojis.length];
+                            emoji.style.left = `${i * 5 + 2}%`;
+                            emoji.style.animationDelay = `${-(i % 5) * 0.8}s`;
+                            rain.append(emoji);
+                        }
+                        document.body.append(rain);
+                    }
                     dismissOnPointerLeave = pointer;
                 }
                 if (persist) {
@@ -152,11 +175,11 @@
             document.addEventListener('keydown', event => {
                 if (event.key === 'Tab' && !panel.hidden) dismissOnPointerLeave = false;
                 if (event.key !== 'Escape' || panel.hidden) return;
-                if (!introduction.contains(document.activeElement) && !introduction.matches(':hover')) return;
+                if (!pinned && !introduction.contains(document.activeElement) && !introduction.matches(':hover')) return;
                 event.preventDefault();
                 close({ dismiss: true, restoreFocus: true });
             });
-            renoVideos.push({ introduction, close });
+            videos.push({ introduction, close });
         });
     }
 
@@ -168,7 +191,7 @@
         const containingPage = document.getElementById(id)?.closest('[data-journal-page]');
         const active = target || containingPage || pages[0];
         pages.forEach(page => { page.hidden = !plain && page !== active; });
-        renoVideos.forEach(video => {
+        videos.forEach(video => {
             if (video.introduction.closest('[hidden]')) video.close();
         });
         tabs.forEach(tab => {
@@ -223,6 +246,18 @@
         if (location.hash === url.hash) showPage({ focus: true });
         else location.hash = url.hash;
     });
-    setupRenoVideos();
+    setupVideos({
+        name: 'reno', id: 'F7F67QGlaaY', start: '107',
+        pattern: /\bReno(?:,\s*|\s+)(?:NV|Nevada)\b/i,
+        title: 'A Reno detour', videoTitle: "Overly Excited Tourist Finds Reno's Secret Wonders",
+        link: 'https://www.youtube.com/watch?v=F7F67QGlaaY&t=107s', linkText: 'watch on YouTube at 1:47'
+    });
+    setupVideos({
+        name: 'new-york', id: '0K39q4GEeVw', host: 'www.youtube-nocookie.com',
+        pattern: /\b(?:Brooklyn(?:,\s*NYC)?|New York(?:,\s*NY)?)\b/i,
+        title: 'A New York detour', videoTitle: 'Frank Sinatra - (Theme From) New York, New York Live in Tokyo',
+        link: 'https://www.youtube.com/watch?v=0K39q4GEeVw', linkText: 'watch on YouTube', rain: true
+    });
+    window.addEventListener('pagehide', () => videos.forEach(video => video.close()));
     updateMode();
 })();
