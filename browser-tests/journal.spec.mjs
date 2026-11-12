@@ -13,10 +13,55 @@ const playerStub = `<title>Video player</title><button>Play</button><script>
 </script>`;
 
 function stubVideo(page) {
-    return page.route('https://www.youtube.com/embed/**', route =>
+    return page.route(/^https:\/\/www\.youtube(?:-nocookie)?\.com\/embed\//, route =>
         route.fulfill({ contentType: 'text/html', body: playerStub })
     );
 }
+
+test('New York player and rain stop on hover exit and navigation', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await stubVideo(page);
+    await page.goto('/');
+    const trigger = page.getByRole('button', { name: 'Brooklyn, NYC (play video)' });
+    const panel = page.locator('#home .new-york-video-panel');
+    const frame = panel.locator('iframe');
+    for (let i = 0; i < 2; i++) {
+        await trigger.hover();
+        await expect(panel).toBeVisible();
+        await expect(frame).toHaveAttribute('src', /youtube-nocookie\.com\/embed\/0K39q4GEeVw/);
+        await expect(page.locator('.new-york-rain')).toBeVisible();
+        await expect(page.locator('.new-york-rain span')).toHaveCount(20);
+        await page.mouse.move(0, 0);
+        await expect(panel).toBeHidden();
+        await expect(frame).not.toHaveAttribute('src', /./);
+        await expect(page.locator('.new-york-rain')).toHaveCount(0);
+    }
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    await expect(panel).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    await expect(trigger).toBeFocused();
+    await page.keyboard.press('Space');
+    await page.locator('.index-tabs [data-section="about"]').click();
+    await expect(panel).toBeHidden();
+    await expect(page.locator('.new-york-rain')).toHaveCount(0);
+});
+
+test('New York player respects reduced motion and retains accessible controls', async ({ page }) => {
+    await stubVideo(page);
+    await page.goto('/');
+    const trigger = page.getByRole('button', { name: 'Brooklyn, NYC (play video)' });
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    const panel = page.locator('#home .new-york-video-panel');
+    await expect(panel).toBeVisible();
+    await expect(page.locator('.new-york-rain')).toBeHidden();
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(results.violations).toEqual([]);
+    await panel.getByRole('button', { name: 'Close video' }).click();
+    await expect(panel).toBeHidden();
+});
 
 test('Reno hover starts at 1:47 and closes when the pointer moves away', async ({ page }) => {
     await stubVideo(page);

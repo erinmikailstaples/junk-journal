@@ -210,3 +210,77 @@ test('opening a second Reno video stops the first in plain mode', () => {
     assert.equal(window.document.activeElement, home.querySelector('.reno-video-trigger'));
     window.close();
 });
+
+test('New York and Reno triggers preserve the introduction and stop each other', () => {
+    const { window } = setup();
+    const text = 'Brooklyn, NYC, by way of Reno, NV.';
+    const introduction = addIntroduction(window, '#home', text);
+    window.eval(script);
+    const ny = introduction.querySelector('.new-york-video-trigger');
+    const panel = introduction.querySelector('.new-york-video-panel');
+    const reno = introduction.querySelector('.reno-video-trigger');
+    const frame = panel.querySelector('iframe');
+    assert.equal(introduction.querySelector('p').textContent, text);
+    assert.equal(ny.textContent, 'Brooklyn, NYC');
+    ny.dispatchEvent(pointerEvent(window, 'pointerenter', 'mouse'));
+    assert.equal(new URL(frame.src).origin + new URL(frame.src).pathname, 'https://www.youtube-nocookie.com/embed/0K39q4GEeVw');
+    assert.equal(window.document.querySelectorAll('.new-york-rain span').length, 20);
+    assert.equal(window.document.querySelector('.new-york-rain').getAttribute('aria-hidden'), 'true');
+    introduction.dispatchEvent(pointerEvent(window, 'pointerleave', 'mouse'));
+    assert.equal(panel.hidden, true);
+    assert.equal(frame.hasAttribute('src'), false);
+    assert.equal(window.document.querySelector('.new-york-rain'), null);
+    ny.click();
+    assert.equal(panel.hidden, false);
+    reno.click();
+    assert.equal(panel.hidden, true);
+    assert.equal(window.document.querySelector('.new-york-rain'), null);
+    assert.equal(introduction.querySelector('.reno-video-panel').hidden, false);
+    ny.click();
+    window.dispatchEvent(new window.Event('pagehide'));
+    assert.equal(panel.hidden, true);
+    assert.equal(window.document.querySelector('.new-york-rain'), null);
+    window.close();
+});
+
+test('New York player closes on navigation and supports alternate introductions', () => {
+    for (const text of ['New York, NY.', 'From Brooklyn.']) {
+        const { window } = setup();
+        const introduction = addIntroduction(window, '#home', text);
+        window.eval(script);
+        const trigger = introduction.querySelector('.new-york-video-trigger');
+        assert.ok(trigger);
+        trigger.click();
+        window.history.replaceState({}, '', '/#about');
+        window.dispatchEvent(new window.HashChangeEvent('hashchange'));
+        assert.equal(introduction.querySelector('.new-york-video-panel').hidden, true);
+        assert.equal(window.document.querySelector('.new-york-rain'), null);
+        window.close();
+    }
+});
+
+test('Escape dismisses pinned New York and Reno players without stealing outside focus', () => {
+    for (const name of ['new-york', 'reno']) {
+        const { window } = setup();
+        const introduction = addIntroduction(window, '#home', 'Brooklyn, NYC, by way of Reno, NV.');
+        window.eval(script);
+        const trigger = introduction.querySelector(`.${name}-video-trigger`);
+        const panel = introduction.querySelector(`.${name}-video-panel`);
+        const outside = window.document.querySelector('.mode-toggle');
+        trigger.focus();
+        trigger.click();
+        outside.focus();
+        window.document.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape' }));
+        assert.equal(panel.hidden, true);
+        assert.equal(panel.querySelector('iframe').hasAttribute('src'), false);
+        assert.equal(window.document.querySelector('.new-york-rain'), null);
+        assert.equal(window.document.activeElement, outside);
+
+        trigger.click();
+        panel.querySelector('.reno-video-close').focus();
+        window.document.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape' }));
+        assert.equal(panel.hidden, true);
+        assert.equal(window.document.activeElement, trigger);
+        window.close();
+    }
+});

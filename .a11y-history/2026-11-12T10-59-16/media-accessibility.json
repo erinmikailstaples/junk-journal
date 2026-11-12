@@ -1,0 +1,21 @@
+{
+  "skill": "media-accessibility",
+  "scope": [
+    "assets/js/journal.js",
+    "assets/css/journal.css",
+    "home.hbs",
+    "partials/bio.hbs"
+  ],
+  "findings": [],
+  "passed": [
+    "The Reno trigger is a native button with an expanded state and a control relationship to the player panel.",
+    "The YouTube iframe has a descriptive title, and the panel provides a direct YouTube link if playback fails.",
+    "The panel has a close button and supports Escape; closing it removes the iframe source.",
+    "The stylesheet disables CSS animations and transitions when reduced motion is preferred."
+  ],
+  "notes": [
+    "The Reno pattern loads an unmuted autoplay iframe on pointer hover. For a music player, use hover only to reveal the player; require deliberate button activation to start audio, with keyboard access and clear play/pause and close controls.",
+    "Verify the chosen YouTube content has accurate captions for relevant lyrics, speech, and sound cues (WCAG 1.2.2 A); provide a transcript if the content is audio-only (1.2.1 A). Caption availability and quality cannot be confirmed from these files.",
+    "Keep emoji rain decorative and out of the accessibility tree. Honor prefers-reduced-motion in both CSS and any JavaScript animation; if motion runs automatically for more than five seconds alongside other content, provide a way to pause, stop, or hide it."
+  ]
+}

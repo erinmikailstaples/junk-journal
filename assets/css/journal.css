@@ -119,16 +119,20 @@ h2 em, .archive h1 em { font-weight: inherit; color: #171717; font-style: normal
 .welcome-note h2 em { background: var(--pink); }
 .welcome-note p { font-size: 14px; max-width: 390px; line-height: 1.75; }
 .reno-introduction { display: flow-root; }
-.reno-video-trigger { padding: 0; border: 0; background: none; text-decoration: underline dotted 2px; text-underline-offset: 3px; }
-.reno-video-trigger:is(:hover, :focus-visible) { background: var(--acid); text-decoration-style: solid; }
-.reno-video-panel { width: min(100%, 390px); margin-bottom: 16px; padding: 10px; border: 2px solid #171717; background: #fffdf6; box-shadow: 4px 4px 0 #171717; }
+:is(.reno-video-trigger, .new-york-video-trigger) { padding: 0; border: 0; background: none; text-decoration: underline dotted 2px; text-underline-offset: 3px; }
+:is(.reno-video-trigger, .new-york-video-trigger):is(:hover, :focus-visible) { background: var(--acid); text-decoration-style: solid; }
+:is(.reno-video-panel, .new-york-video-panel) { width: min(100%, 390px); margin-bottom: 16px; padding: 10px; border: 2px solid #171717; background: #fffdf6; box-shadow: 4px 4px 0 #171717; }
 .reno-video-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; font-size: 14px; }
 .reno-video-actions { display: flex; gap: 6px; }
 .reno-video-play, .reno-video-close { min-width: 44px; min-height: 44px; padding: 6px 9px; border: 2px solid #171717; font-size: 12px; font-weight: bold; }
 .reno-video-play { background: #fff; }
 .reno-video-close { background: var(--acid); }
-.reno-video-frame { display: block; width: 100%; min-height: 200px; aspect-ratio: 16 / 9; border: 0; background: #171717; }
-.reno-video-panel .reno-video-help { margin: 8px 0 0; font-size: 13px; line-height: 1.5; }
+:is(.reno-video-frame, .new-york-video-frame) { display: block; width: 100%; min-height: 200px; aspect-ratio: 16 / 9; border: 0; background: #171717; }
+:is(.reno-video-panel, .new-york-video-panel) .reno-video-help { margin: 8px 0 0; font-size: 13px; line-height: 1.5; }
+.new-york-video-panel { position: relative; z-index: 21; }
+.new-york-rain { position: fixed; inset: 0; z-index: 19; overflow: hidden; pointer-events: none; }
+.new-york-rain span { position: absolute; top: -40px; font-size: 28px; animation: new-york-fall 4s linear infinite; }
+@keyframes new-york-fall { to { transform: translateY(calc(100vh + 40px)); } }
 .welcome-signoff { margin-top: 17px; color: var(--muted); }
 .welcome-badges { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; margin: 22px 0 26px; }
 .welcome-badges .camp-patch { width: 86px; transform: rotate(-7deg); }
@@ -423,6 +427,7 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+    .new-york-rain { display: none; }
 }
 
 /* Plain mode changes presentation, never the available content. */
@@ -456,7 +461,8 @@ html[data-mode="plain"] h2, html[data-mode="plain"] .section-cover h2 { font-siz
 html[data-mode="plain"] h2 em, html[data-mode="plain"] .welcome-note h2 > span:first-child { color: inherit; background: none; padding: 0; }
 html[data-mode="plain"] .welcome-note { margin: 0; }
 html[data-mode="plain"] p, html[data-mode="plain"] .welcome-note p { font-size: 17px; max-width: none; }
-html[data-mode="plain"] .reno-video-panel { background: #fff; box-shadow: none; }
+html[data-mode="plain"] :is(.reno-video-panel, .new-york-video-panel) { background: #fff; box-shadow: none; }
+html[data-mode="plain"] .new-york-rain { display: none; }
 html[data-mode="plain"] .reno-video-close { background: #fff; }
 html[data-mode="plain"] .pink-note { background: none; border: 0; padding: 12px 0; margin: 15px 0; transform: none; box-shadow: none; text-decoration: underline; }
 html[data-mode="plain"] .note-label, html[data-mode="plain"] .note-title { display: none; }
