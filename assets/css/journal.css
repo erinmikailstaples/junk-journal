@@ -106,15 +106,19 @@ main:focus { outline: none; }
 .tape-top { transform: translateX(-50%) rotate(9deg); }
 .postcrossing-postcard { display: flex; flex-direction: column; align-items: center; width: min(100%, 280px); margin: 38px 0 30px 12px; text-align: center; text-decoration: none; transform: rotate(4deg); transition: transform .2s; }
 .postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(-2deg); }
-.postcrossing-envelope { display: block; width: 100%; overflow: visible; filter: drop-shadow(2px 4px 3px #49372155); }
-.envelope-paper { fill: #fffdf6; stroke: #b9ad96; stroke-width: 2; }
-.envelope-seams { fill: none; stroke: #b9ad96; stroke-width: 2; }
-.envelope-flap { fill: #eee8d8; stroke: #b9ad96; stroke-width: 2; }
-.envelope-stamp { fill: var(--pink); stroke: #171717; stroke-width: 2; stroke-dasharray: 3 2; }
+.postcrossing-artwork { display: block; width: 100%; overflow: visible; filter: drop-shadow(2px 4px 3px #49372155); }
+.postcard-paper { fill: #fffdf6; stroke: #b9ad96; stroke-width: 2; }
+.postcard-lines { stroke: #b9ad96; stroke-width: 2; }
+.postcard-greeting { fill: var(--ink); font: 28px var(--hand); }
+.postcard-stamp { fill: var(--pink); stroke: #171717; stroke-width: 2; stroke-dasharray: 3 2; }
 .postcrossing-label { position: relative; background: #eee1bb; padding: 4px 12px; margin-top: -13px; font: bold 12px/1.4 "Courier New", monospace; box-shadow: 1px 2px 3px #48352044; }
 .postcrossing-note { font: 20px/1.4 var(--hand); margin-top: 4px; }
-.postcrossing-stats { font: 11px/1.6 var(--sans); }
+.postcrossing-stats { font: 11px/1.6 var(--sans); visibility: hidden; }
+.postcrossing-postcard:is(:hover, :focus-visible) .postcrossing-stats { visibility: visible; }
 .postcrossing-date { display: block; font-size: 10px; }
+@media (hover: none), (pointer: coarse) {
+    .postcrossing-stats { visibility: visible; }
+}
 .small-collection { flex: 1; display: flex; flex-direction: column; align-items: center; padding-top: 4px; gap: 20px; }
 .postage-stamp { display: flex; flex-direction: column; align-items: center; width: 106px; background: repeating-linear-gradient(0deg, #6e6c4020 0 1px, transparent 1px 3px), #d8d0b1; border: 3px double #65724f; outline: 2px dashed #c3b991; outline-offset: 2px; padding: 9px 5px 6px; font-family: "Courier New", monospace; font-weight: bold; font-size: 9px; line-height: 1.5; text-align: center; transform: rotate(10deg); letter-spacing: -.04em; box-shadow: 2px 4px 5px #48352044; }
 .stamp-star { font-size: 31px; line-height: 1.2; color: #171717; }
@@ -481,9 +485,10 @@ html[data-mode="plain"] h2, html[data-mode="plain"] .section-cover h2 { font-siz
 html[data-mode="plain"] h2 em, html[data-mode="plain"] .welcome-note h2 > span:first-child { color: inherit; background: none; padding: 0; }
 html[data-mode="plain"] .welcome-note { margin: 0; }
 html[data-mode="plain"] .postcrossing-postcard { width: auto; align-items: flex-start; margin: 20px 0; transform: none; text-align: left; }
-html[data-mode="plain"] .postcrossing-envelope { display: none; }
+html[data-mode="plain"] .postcrossing-artwork { display: none; }
 html[data-mode="plain"] .postcrossing-label { font: inherit; text-decoration: underline; background: none; padding: 8px 0; margin: 0; box-shadow: none; }
 html[data-mode="plain"] .postcrossing-note, html[data-mode="plain"] .postcrossing-stats, html[data-mode="plain"] .postcrossing-date { font: inherit; }
+html[data-mode="plain"] .postcrossing-stats { visibility: visible; }
 html[data-mode="plain"] p, html[data-mode="plain"] .welcome-note p { font-size: 17px; max-width: none; }
 html[data-mode="plain"] :is(.reno-video-panel, .new-york-video-panel) { background: #fff; box-shadow: none; }
 html[data-mode="plain"] .new-york-rain { display: none; }
