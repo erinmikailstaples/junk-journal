@@ -18,6 +18,111 @@ function stubVideo(page) {
     );
 }
 
+test('portrait retains original colors and draws doodles on hover and keyboard focus', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.goto('/');
+    const portrait = page.locator('.portrait-print');
+    const doodles = portrait.locator('.portrait-doodles');
+    await expect(portrait.locator('img')).toHaveCSS('filter', 'none');
+    await expect(doodles).toHaveCSS('opacity', '0');
+    await portrait.hover();
+    await expect(doodles).toHaveCSS('opacity', '1');
+    await expect(doodles.locator('.doodle-mustache')).toHaveCSS('stroke-dashoffset', '0px');
+    await expect(doodles.locator('.doodle-stars')).toHaveCSS('stroke-dashoffset', '0px');
+    await page.mouse.move(0, 0);
+    await expect(doodles).toHaveCSS('opacity', '0');
+    await portrait.focus();
+    await expect(doodles).toHaveCSS('opacity', '1');
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#about-title')).toBeFocused();
+    await expect(page.locator('.about-portrait')).toHaveCSS('filter', 'none');
+});
+
+test('reduced motion reveals static portrait doodles without animation', async ({ page }) => {
+    await page.goto('/');
+    const portrait = page.locator('.portrait-print');
+    await portrait.focus();
+    await expect(portrait.locator('.portrait-doodles')).toHaveCSS('opacity', '1');
+    for (const path of await portrait.locator('.portrait-doodles path').all()) {
+        await expect(path).toHaveCSS('animation-name', 'none');
+        await expect(path).toHaveCSS('stroke-dashoffset', '0px');
+    }
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(results.violations).toEqual([]);
+});
+
+test('Postcrossing postcard remains readable and clear of the footer at every breakpoint', async ({ page }) => {
+    for (const width of [320, 390, 700, 768, 1024, 1100, 1440, 1920]) {
+        await page.setViewportSize({ width, height: 1100 });
+        await page.goto('/');
+        await page.evaluate(() => document.fonts.ready);
+        const postcard = page.getByRole('link', { name: /Postcrossing/ });
+        await expect(postcard).toHaveAttribute('href', 'https://www.postcrossing.com/user/erinmikail');
+        const box = await postcard.boundingBox();
+        const footer = await page.locator('.cover-page .page-bottom').boundingBox();
+        const portrait = await page.locator('.portrait-print').boundingBox();
+        expect(box.y, `${width}px below portrait`).toBeGreaterThan(portrait.y + portrait.height);
+        expect(box.y + box.height + 12, `${width}px footer clearance`).toBeLessThan(footer.y);
+        expect(box.x, `${width}px left edge`).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width, `${width}px right edge`).toBeLessThanOrEqual(width);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        await postcard.focus();
+        await expect(postcard).toHaveCSS('outline-style', 'solid');
+        await page.locator('.mode-toggle').click();
+        await expect(postcard).toBeVisible();
+        await expect(postcard.locator('.postcrossing-artwork')).toBeHidden();
+        await expect(postcard.locator('.postcrossing-stats')).toBeVisible();
+        await expect(postcard.locator('time')).toBeVisible();
+        await page.locator('.mode-toggle').click();
+    }
+});
+
+test('Postcrossing stats reveal on hover and focus without layout shifts, and clicking opens the profile', async ({ page }) => {
+    await page.goto('/');
+    const postcard = page.getByRole('link', { name: 'Postcrossing', exact: true });
+    const stats = postcard.locator('.postcrossing-stats');
+    await expect(stats).toBeHidden();
+    const idleHeight = await postcard.evaluate(element => element.offsetHeight);
+    await postcard.hover();
+    await expect(stats).toBeVisible();
+    await expect(stats).toContainText('28 sent / 28 received');
+    expect(await postcard.evaluate(element => element.offsetHeight)).toBe(idleHeight);
+    await page.mouse.move(0, 0);
+    await expect(stats).toBeHidden();
+    await postcard.focus();
+    await expect(stats).toBeVisible();
+    await expect(postcard).toHaveAccessibleDescription(/28 sent \/ 28 received/);
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(results.violations).toEqual([]);
+    await page.route('https://www.postcrossing.com/user/erinmikail', route =>
+        route.fulfill({ contentType: 'text/html', body: '<title>Postcrossing profile</title>' })
+    );
+    await postcard.click();
+    await expect(page).toHaveURL('https://www.postcrossing.com/user/erinmikail');
+});
+
+test('Postcrossing stats stay visible on touch and a single tap opens the profile', async ({ browser }) => {
+    const context = await browser.newContext({
+        baseURL: 'http://127.0.0.1:2468',
+        viewport: { width: 390, height: 844 },
+        isMobile: true,
+        hasTouch: true
+    });
+    try {
+        const page = await context.newPage();
+        await page.goto('/');
+        const postcard = page.getByRole('link', { name: 'Postcrossing', exact: true });
+        await expect(postcard.locator('.postcrossing-stats')).toBeVisible();
+        await page.route('https://www.postcrossing.com/user/erinmikail', route =>
+            route.fulfill({ contentType: 'text/html', body: '<title>Postcrossing profile</title>' })
+        );
+        await postcard.tap();
+        await expect(page).toHaveURL('https://www.postcrossing.com/user/erinmikail');
+    } finally {
+        await context.close();
+    }
+});
+
 test('New York player and rain stop on hover exit and navigation', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await stubVideo(page);
