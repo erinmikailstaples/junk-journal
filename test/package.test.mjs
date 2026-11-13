@@ -11,7 +11,7 @@ const cwd = fileURLToPath(new URL('../', import.meta.url));
 test('the deployable archive contains native Ghost templates but no development files or routing overrides', () => {
     execFileSync(process.execPath, ['scripts/package.mjs'], { cwd });
     const entries = execFileSync('unzip', ['-Z1', 'dist/erin-junk-journal.zip'], { cwd, encoding: 'utf8' }).trim().split('\n');
-    for (const path of ['home.hbs', 'page.hbs', 'post.hbs', 'index.hbs', 'tag.hbs', 'author.hbs', 'default.hbs', 'partials/navigation.hbs', 'assets/css/journal.css', 'assets/js/journal.js', 'package.json']) {
+    for (const path of ['home.hbs', 'page.hbs', 'page-resume.hbs', 'custom-resume.hbs', 'post.hbs', 'index.hbs', 'tag.hbs', 'author.hbs', 'default.hbs', 'partials/navigation.hbs', 'partials/resume-page.hbs', 'partials/resume-content.hbs', 'assets/css/journal.css', 'assets/js/journal.js', 'package.json']) {
         assert.ok(entries.includes(path), `Missing theme file: ${path}`);
     }
     const developmentFiles = entries.filter(path => /^(?:node_modules|scripts|test|browser-tests|\.github|\.git)\//.test(path));
