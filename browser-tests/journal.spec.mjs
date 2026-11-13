@@ -4,6 +4,178 @@ import { readFileSync } from 'node:fs';
 
 const existingSite = JSON.parse(readFileSync(new URL('../scripts/fixtures/site-pages.json', import.meta.url), 'utf8'));
 const tutorialPath = '/building-tutorial-tinder-from-idea-to-deployed-replit-demo/';
+const playerStub = `<title>Video player</title><button>Play</button><script>
+    window.addEventListener('message', event => {
+        if (typeof event.data !== 'string' || !event.data.startsWith('{')) return;
+        const { func } = JSON.parse(event.data);
+        if (func) document.body.dataset.commands = (document.body.dataset.commands || '') + func + ',';
+    });
+</script>`;
+
+function stubVideo(page) {
+    return page.route(/^https:\/\/www\.youtube(?:-nocookie)?\.com\/embed\//, route =>
+        route.fulfill({ contentType: 'text/html', body: playerStub })
+    );
+}
+
+test('New York player and rain stop on hover exit and navigation', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await stubVideo(page);
+    await page.goto('/');
+    const trigger = page.getByRole('button', { name: 'Brooklyn, NYC (play video)' });
+    const panel = page.locator('#home .new-york-video-panel');
+    const frame = panel.locator('iframe');
+    for (let i = 0; i < 2; i++) {
+        await trigger.hover();
+        await expect(panel).toBeVisible();
+        await expect(frame).toHaveAttribute('src', /youtube-nocookie\.com\/embed\/0K39q4GEeVw/);
+        await expect(page.locator('.new-york-rain')).toBeVisible();
+        await expect(page.locator('.new-york-rain span')).toHaveCount(20);
+        await page.mouse.move(0, 0);
+        await expect(panel).toBeHidden();
+        await expect(frame).not.toHaveAttribute('src', /./);
+        await expect(page.locator('.new-york-rain')).toHaveCount(0);
+    }
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    await expect(panel).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    await expect(trigger).toBeFocused();
+    await page.keyboard.press('Space');
+    await page.locator('.index-tabs [data-section="about"]').click();
+    await expect(panel).toBeHidden();
+    await expect(page.locator('.new-york-rain')).toHaveCount(0);
+});
+
+test('New York player respects reduced motion and retains accessible controls', async ({ page }) => {
+    await stubVideo(page);
+    await page.goto('/');
+    const trigger = page.getByRole('button', { name: 'Brooklyn, NYC (play video)' });
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    const panel = page.locator('#home .new-york-video-panel');
+    await expect(panel).toBeVisible();
+    await expect(page.locator('.new-york-rain')).toBeHidden();
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(results.violations).toEqual([]);
+    await panel.getByRole('button', { name: 'Close video' }).click();
+    await expect(panel).toBeHidden();
+});
+
+test('Reno hover starts at 1:47 and closes when the pointer moves away', async ({ page }) => {
+    await stubVideo(page);
+    await page.goto('/');
+    const trigger = page.getByRole('button', { name: 'Reno, NV (play video)' });
+    const panel = page.locator('#home .reno-video-panel');
+    const frame = panel.locator('iframe');
+    await trigger.hover();
+    await expect(panel).toBeVisible();
+    const source = new URL(await frame.getAttribute('src'));
+    expect(source.pathname).toBe('/embed/F7F67QGlaaY');
+    expect(source.searchParams.get('start')).toBe('107');
+    expect(source.searchParams.get('autoplay')).toBe('1');
+    expect(source.searchParams.get('mute')).toBe('0');
+    const player = page.frameLocator('#home .reno-video-frame');
+    await expect(player.getByRole('button', { name: 'Play' })).toBeVisible();
+    const triggerBox = await trigger.boundingBox();
+    await page.mouse.move(triggerBox.x - 20, triggerBox.y + triggerBox.height / 2);
+    await expect(panel).toBeHidden();
+    await expect(frame).not.toHaveAttribute('src', /./);
+
+    await trigger.hover();
+    const closeBox = await panel.getByRole('button', { name: 'Close video' }).boundingBox();
+    await page.mouse.move(closeBox.x + closeBox.width / 2, closeBox.y + closeBox.height / 2, { steps: 20 });
+    await expect(panel).toBeVisible();
+    await trigger.hover();
+    await trigger.click();
+    await expect(player.locator('body')).toHaveAttribute('data-commands', /playVideo/);
+    await expect(player.locator('body')).not.toHaveAttribute('data-commands', /unMute/);
+    await panel.getByRole('button', { name: 'Play video' }).click();
+    await expect(panel).toBeVisible();
+    await page.mouse.move(triggerBox.x - 20, triggerBox.y + triggerBox.height / 2);
+    await expect(panel).toBeHidden();
+    await expect(frame).not.toHaveAttribute('src', /./);
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    await expect(trigger).toBeFocused();
+});
+
+test('Reno video supports keyboard activation and stops when changing pages', async ({ page }) => {
+    await stubVideo(page);
+    await page.goto('/');
+    const trigger = page.getByRole('button', { name: 'Reno, NV (play video)' });
+    const panel = page.locator('#home .reno-video-panel');
+    await trigger.focus();
+    await expect(panel).toBeHidden();
+    await page.keyboard.press('Enter');
+    await expect(panel).toBeVisible();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await trigger.hover();
+    await page.mouse.move(0, 0);
+    await expect(panel).toBeVisible();
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(results.violations).toEqual([]);
+    await page.keyboard.press('Tab');
+    await expect(panel.getByRole('button', { name: 'Play video' })).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(panel.getByRole('button', { name: 'Close video' })).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    await expect(trigger).toBeFocused();
+    await page.keyboard.press('Space');
+    await page.locator('.index-tabs [data-section="about"]').click();
+    await expect(panel).toBeHidden();
+    await expect(panel.locator('iframe')).not.toHaveAttribute('src', /./);
+    await expect(page.locator('#about-title')).toBeFocused();
+});
+
+test('Reno video fits a small phone in journal and plain modes', async ({ page }) => {
+    await stubVideo(page);
+    await page.setViewportSize({ width: 320, height: 900 });
+    await page.goto('/');
+    for (const mode of ['journal', 'plain']) {
+        if (mode === 'plain') await page.locator('.mode-toggle').click();
+        const trigger = page.locator('#home .reno-video-trigger');
+        await trigger.click();
+        const panel = page.locator('#home .reno-video-panel');
+        await expect(panel).toBeVisible();
+        const box = await panel.boundingBox();
+        expect(box.x).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width).toBeLessThanOrEqual(320);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        if (mode === 'plain') {
+            const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+            expect(results.violations).toEqual([]);
+        }
+        await panel.getByRole('button', { name: 'Close video' }).click();
+    }
+});
+
+test('Reno video opens and closes with touch', async ({ browser }) => {
+    const context = await browser.newContext({
+        baseURL: 'http://127.0.0.1:2468',
+        viewport: { width: 390, height: 844 },
+        isMobile: true,
+        hasTouch: true
+    });
+    try {
+        const page = await context.newPage();
+        await stubVideo(page);
+        await page.goto('/');
+        await page.locator('#home .reno-video-trigger').tap();
+        const panel = page.locator('#home .reno-video-panel');
+        await expect(panel).toBeVisible();
+        const player = page.frameLocator('#home .reno-video-frame');
+        await expect(player.getByRole('button', { name: 'Play' })).toBeVisible();
+        await panel.getByRole('button', { name: 'Play video' }).tap();
+        await expect(player.locator('body')).toHaveAttribute('data-commands', /playVideo/);
+        await panel.getByRole('button', { name: 'Close video' }).tap();
+        await expect(panel).toBeHidden();
+        await expect(panel.locator('iframe')).not.toHaveAttribute('src', /./);
+    } finally {
+        await context.close();
+    }
+});
 
 test('every journal page and plain mode pass automated WCAG AA checks', async ({ page }) => {
     await page.goto('/');
