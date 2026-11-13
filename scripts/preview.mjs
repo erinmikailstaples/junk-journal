@@ -33,13 +33,13 @@ const samples = [sample, project];
 const previewPages = [...existingSite.pages, { slug: 'contact', title: 'Contact' }].map(page => ({
     ...page,
     url: `/${page.slug}/`,
-    html: page.empty ? '' : '<p>This is a sample page for the local theme preview, not a copy of the published content. On Ghost, the existing page content stays at this URL.</p>',
+    html: page.empty || page.slug === 'resume' ? '' : '<p>This is a sample page for the local theme preview, not a copy of the published content. On Ghost, the existing page content stays at this URL.</p>',
     access: true
 }));
 
 hbs.registerHelper('asset', path => `/assets/${path}`);
 hbs.registerHelper('meta_title', () => 'Erin Mikail Staples — the notebook');
-hbs.registerHelper('body_class', function () { return `${this.previewTemplate}-template`; });
+hbs.registerHelper('body_class', function () { return `${this.previewTemplate === 'page-resume' ? 'page' : this.previewTemplate}-template`; });
 hbs.registerHelper('post_class', () => 'post');
 hbs.registerHelper('ghost_head', () => '');
 hbs.registerHelper('ghost_foot', () => '');
@@ -109,6 +109,7 @@ const server = http.createServer(async (req, res) => {
         else if (path.startsWith('/page/')) template = 'index';
         else if (path.startsWith('/tag/')) template = 'tag';
         else if (path.startsWith('/author/')) template = 'author';
+        else if (path === '/resume/') template = 'page-resume';
         else if (previewPages.some(page => page.url === path)) template = 'page';
         else if (samples.some(post => post.url === path)) template = 'post';
         const templateText = (await readFile(resolve(root, `${template}.hbs`), 'utf8')).replace(/\{\{!< default\}\}/g, '');

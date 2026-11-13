@@ -515,7 +515,7 @@ test('all sections remain readable without JavaScript', async ({ browser }) => {
 });
 
 test('article and archive templates render and are accessible', async ({ page }) => {
-    for (const path of [tutorialPath, '/page/2/', '/about/', '/tag/all-posts/', '/author/erin/', '/not-a-page/']) {
+    for (const path of [tutorialPath, '/page/2/', '/about/', '/resume/', '/tag/all-posts/', '/author/erin/', '/not-a-page/']) {
         const response = await page.goto(path);
         expect(response.status()).toBe(path === '/not-a-page/' ? 404 : 200);
         await expect(page.locator('h1')).toBeVisible();
@@ -532,9 +532,10 @@ test('existing sitemap pages render as pages in journal and plain mode', async (
             const response = await page.goto(`/${fixture.slug}/`);
             expect(response.status(), fixture.slug).toBe(200);
             await expect(page.locator('body')).toHaveClass('page-template');
-            await expect(page.locator('.article h1')).toHaveText(fixture.title);
+            await expect(page.locator('.article h1')).toHaveText(fixture.slug === 'resume' ? 'Erin Mikail Staples' : fixture.title);
             expect(await page.evaluate(() => document.documentElement.dataset.mode ?? 'journal')).toBe(mode);
-            if (fixture.empty) await expect(page.locator('.gh-content')).toBeEmpty();
+            if (fixture.slug === 'resume') await expect(page.locator('.gh-content')).toContainText('Selected speaking');
+            else if (fixture.empty) await expect(page.locator('.gh-content')).toBeEmpty();
             else await expect(page.locator('.gh-content')).toContainText('sample page');
         }
     }
@@ -554,7 +555,7 @@ test('existing navigation and resume links stay on the current Ghost site', asyn
     await page.goto('/');
     await page.locator('.resume-scrap').click();
     await expect(page).toHaveURL('http://127.0.0.1:2468/resume/');
-    await expect(page.locator('.article h1')).toHaveText('Resume');
+    await expect(page.locator('.article h1')).toHaveText('Erin Mikail Staples');
     await page.goto('/#about');
     await expect(page.locator('#about a', { hasText: 'formal version' })).toHaveAttribute('href', 'http://127.0.0.1:2468/resume/');
 });

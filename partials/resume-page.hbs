@@ -1,0 +1,20 @@
+<article class="article paper-page {{post_class}}">
+    <header class="article-header">
+        <a class="back-link" href="{{@site.url}}">← Back to the notebook</a>
+        {{#if html}}
+            {{#match @page.show_title_and_feature_image "!=" false}}
+                <h1>{{title}}</h1>
+                {{#if feature_image}}<figure class="feature-image"><img src="{{img_url feature_image size="large"}}" alt="{{feature_image_alt}}" width="1600"></figure>{{/if}}
+            {{/match}}
+        {{else}}
+            <h1>Erin Mikail Staples</h1>
+        {{/if}}
+    </header>
+    <div class="gh-content">
+        {{#if html}}
+            {{content}}
+        {{else}}
+            {{> "resume-content"}}
+        {{/if}}
+    </div>
+</article>

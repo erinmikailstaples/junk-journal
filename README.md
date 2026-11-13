@@ -21,12 +21,14 @@ The public [sitemap index](https://www.erinmikailstaples.com/sitemap.xml) and al
 | Existing URLs | Count | Theme support |
 | --- | ---: | --- |
 | Homepage | 1 | `home.hbs`, with the journal and plain mode |
-| Standalone pages | 12 | `page.hbs`, preserving each page's slug, editor content, and title/image display setting |
+| Standalone pages | 12 | `page.hbs`, with dedicated résumé templates and preserved Ghost editor content |
 | Posts | 62 | `post.hbs`, with native content, tags, authors, access handling, and comments |
 | Tag archives | 65 | `tag.hbs` and native pagination |
 | Author archives | 1 | `author.hbs` at `/author/erin/` |
 
 The existing page URLs are `/resume/`, `/about/`, `/tools/`, `/links/`, `/strangeloop-2023/`, `/newsletter/`, `/coming-from/`, `/now/`, `/codeland-2022/`, `/personal-updates/`, `/words/`, and `/humor/`. They remain standalone pages, not redirects to journal tabs. In particular, `/words/` is an existing curated page and `/tag/all-posts/` remains the full post archive. The current primary navigation (All Posts, Now, Events, Resume) is supplied by Ghost and appears on the journal's About page. The theme's own resume links use the current Ghost site URL, including on staging.
+
+The previous résumé lived in a theme template rather than its Ghost editor body. If the `/resume/` page has an empty editor body, `page-resume.hbs` and the previously assigned `custom-resume.hbs` show the draft in `partials/resume-content.hbs`. If the page has editor content, that content takes precedence instead. Review the draft, including the unconfirmed Tiger Data start date, before activating this theme. To maintain the résumé in Ghost instead, add the complete content to that page in Ghost Admin; theme fallback content is not included in Ghost content exports.
 
 The public `/about/`, `/tools/`, `/links/`, and `/newsletter/` pages currently have no rendered editor body. The new theme does not invent replacement content or a newsletter signup flow. Fill those pages in Ghost if desired; the journal's About tab already has a fallback bio when the About page is empty. Ghost Portal and membership settings remain managed in Ghost.
 
@@ -39,7 +41,7 @@ Before the first activation:
 
 If moving to a *different* Ghost installation, content/media/settings migration is a separate step; a theme ZIP contains presentation, not a backup of the publication.
 
-`scripts/fixtures/site-pages.json` records the audited page slugs and primary navigation for offline preview checks. Preview bodies are labeled placeholders, not copies of the live pages. These checks exercise the theme templates; they do not replace a real Ghost staging check.
+`scripts/fixtures/site-pages.json` records the audited page slugs and primary navigation for offline preview checks. The résumé preview uses the theme draft; other preview bodies are labeled placeholders, not copies of the live pages. These checks exercise the theme templates; they do not replace a real Ghost staging check.
 
 ## GitHub Actions uploads
 
