@@ -43,13 +43,13 @@ If moving to a *different* Ghost installation, content/media/settings migration 
 
 `scripts/fixtures/site-pages.json` records the audited page slugs and primary navigation for offline preview checks. The résumé preview uses the theme draft; other preview bodies are labeled placeholders, not copies of the live pages. These checks exercise the theme templates; they do not replace a real Ghost staging check.
 
-## GitHub Actions uploads
+## GitHub Actions deploys
 
-`.github/workflows/ghost-theme.yml` runs unit/package checks, Chromium interaction and accessibility checks, Ghost **5 and 6** validation, packaging, and validation of the resulting ZIP on pull requests and pushes to `main`. Each successful run retains the installable ZIP as an artifact for 14 days. Pull requests never receive Ghost credentials or upload a theme.
+`.github/workflows/ghost-theme.yml` runs unit/package checks, Chromium interaction and accessibility checks, Ghost **5 and 6** validation, packaging, and validation of the resulting ZIP on pull requests and pushes to `main`. Each successful run retains the installable ZIP as an artifact for 14 days. Pull requests never receive Ghost credentials, upload a theme, or activate one.
 
 Checks use Node.js 24 LTS and GScan's API directly, so compatibility errors and archive-reading failures fail CI rather than being swallowed by the GScan CLI.
 
-After checks pass on `main`, the workflow uploads the exact validated ZIP using [Ghost's official deployment action](https://github.com/TryGhost/action-deploy-theme). A manual workflow run also works, but uploads are restricted to `main`. Actions are pinned to immutable commit hashes, the GitHub token is read-only, and uploads are serialized.
+After checks pass on `main`, the workflow uploads the exact validated ZIP as the `erin-junk-journal` theme using [Ghost's official deployment action](https://github.com/TryGhost/action-deploy-theme), then activates it through the Admin API (`scripts/activate-ghost-theme.mjs`). A manual workflow run also works, but deploys are restricted to `main`. Actions are pinned to immutable commit hashes, the GitHub token is read-only, and uploads are serialized.
 
 ### One-time setup
 
@@ -62,12 +62,12 @@ After checks pass on `main`, the workflow uploads the exact validated ZIP using 
    | `GHOST_ADMIN_API_URL` | The HTTPS API URL copied from the custom integration, including the correct Ghost admin host. Do not use `https://ghost.org` or guess the host from the public domain. |
    | `GHOST_ADMIN_API_KEY` | The **Admin API key**, not the Content API key, from that integration. |
 
-4. Merge the PR. Alternatively, open **Actions > Theme checks and Ghost upload > Run workflow** and select `main`.
-5. After a successful upload, open **Ghost Admin > Settings > Design & branding > Change theme** and manually activate the uploaded version.
+4. Merge the PR. Alternatively, open **Actions > Theme checks and Ghost deploy > Run workflow** and select `main`.
+5. After the workflow succeeds, check both journal and plain mode at the live URLs.
 
-**Activation is deliberately manual for every new commit.** Uploads are named `erin-junk-journal-<full-commit-SHA>.zip`, giving each revision a separate theme identity instead of overwriting the active theme. Ghost's deploy action only uploads; this workflow never calls the activation endpoint. Each revision is a new theme, so review/reapply its theme-specific design settings before activation. Keep a known-good version for rollback and periodically remove obsolete inactive themes in Ghost. Re-running the same commit replaces that commit's upload, so use a new commit for changes rather than overwriting an active revision.
+**Every push to `main` goes live.** Each upload replaces the same `erin-junk-journal` theme, which keeps its Ghost design settings, and the workflow activates it. If the theme is already active, Ghost reloads it with the new files. To roll back, revert the commit on `main` and let the workflow redeploy. For a faster emergency rollback, activate a different theme in Ghost Admin. The next push to `main` re-activates `erin-junk-journal`. Older per-commit uploads (`erin-junk-journal-<SHA>`) are no longer created and can be deleted in Ghost Admin.
 
-Missing credentials fail the upload job with an explicit setup error; validation and the downloadable theme artifact still run. Never put API keys in Git, workflow inputs, issues, or chat. No live upload can be verified until the integration secrets are configured.
+Missing credentials fail the deploy job with an explicit setup error; validation and the downloadable theme artifact still run. Never put API keys in Git, workflow inputs, issues, or chat. No live deploy can be verified until the integration secrets are configured.
 
 ## Preview and develop
 

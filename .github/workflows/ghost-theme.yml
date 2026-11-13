@@ -1,4 +1,4 @@
-name: Theme checks and Ghost upload
+name: Theme checks and Ghost deploy
 
 on:
   pull_request:
@@ -48,7 +48,7 @@ jobs:
           retention-days: 7
 
   upload:
-    name: Upload to Ghost for manual activation
+    name: Upload and activate in Ghost
     needs: validate
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
@@ -68,18 +68,27 @@ jobs:
             echo "::error::GHOST_ADMIN_API_URL must be the HTTPS API URL from your Ghost custom integration."
             exit 1
           fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts/activate-ghost-theme.mjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ghost-theme-${{ github.sha }}
           path: dist/
-      - name: Give this upload its own theme identity
-        env:
-          DEPLOY_COMMIT: ${{ github.sha }}
-        run: mv dist/erin-junk-journal.zip "dist/erin-junk-journal-${DEPLOY_COMMIT}.zip"
-      - name: Upload the validated archive without activating it
+      - name: Replace the erin-junk-journal theme with the validated archive
         uses: TryGhost/action-deploy-theme@b1ff2a5eeac1d5438a0aab35eb996fe4010d889e # v2
         with:
           api-url: ${{ secrets.GHOST_ADMIN_API_URL }}
           api-key: ${{ secrets.GHOST_ADMIN_API_KEY }}
           version: v5.0
-          file: dist/erin-junk-journal-${{ github.sha }}.zip
+          file: dist/erin-junk-journal.zip
+      - name: Activate the erin-junk-journal theme
+        env:
+          GHOST_ADMIN_API_URL: ${{ secrets.GHOST_ADMIN_API_URL }}
+          GHOST_ADMIN_API_KEY: ${{ secrets.GHOST_ADMIN_API_KEY }}
+        run: node scripts/activate-ghost-theme.mjs erin-junk-journal
