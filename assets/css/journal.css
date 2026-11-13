@@ -152,9 +152,9 @@ h2 em, .archive h1 em { font-weight: inherit; color: #171717; font-style: normal
 .secret-note { flex: 1; position: relative; z-index: 2; }
 .secret-note summary { display: flex; flex-direction: column; align-items: center; list-style: none; min-height: 70px; padding: 5px; }
 .secret-note summary::-webkit-details-marker { display: none; }
-.secret-note summary .handwritten { font-size: 15px; transform: rotate(-7deg); }
-.envelope { display: grid; place-items: center; width: 85px; height: 51px; border: 1px solid #171717; background: linear-gradient(150deg, transparent 49%, #171717 50%, transparent 52%) left/50% 100% no-repeat, linear-gradient(210deg, transparent 49%, #171717 50%, transparent 52%) right/50% 100% no-repeat, #f27ed5; font-family: var(--serif); font-size: 33px; color: #171717; transform: rotate(-8deg); box-shadow: 3px 3px 0 #171717; }
-.secret-note p { position: absolute; left: -12px; bottom: 82px; width: 230px; background: var(--acid); padding: 20px; box-shadow: 4px 4px 0 #171717; font-size: 13px; border: 2px solid #171717; }
+.lightbulb-doodle { display: block; width: 76px; height: 76px; color: var(--ink); transform: rotate(-8deg); }
+.lightbulb-fill { fill: var(--acid); opacity: .7; }
+.secret-note p { position: absolute; left: -12px; bottom: calc(100% - 6px); width: 230px; margin: 0; background: var(--acid); padding: 20px; box-shadow: 4px 4px 0 #171717; font-size: 13px; border: 2px solid #171717; }
 .hello-ticket { position: relative; display: flex; flex-direction: column; width: 56%; background: #b9b6fc; border: 2px solid #171717; outline: 4px solid #b9b6fc; padding: 9px 10px; text-align: center; text-decoration: none; transform: rotate(-6deg); box-shadow: 5px 5px 0 #171717; }
 .hello-ticket > span { font-family: "Courier New", monospace; font-size: 7px; letter-spacing: -.02em; font-weight: bold; }
 .hello-ticket strong { font-family: var(--serif); font-size: 29px; font-weight: 900; padding: 4px 0 7px; border-bottom: 2px dashed #171717; margin-bottom: 6px; white-space: nowrap; }
@@ -471,10 +471,10 @@ html[data-mode="plain"] .bottom-scraps { display: block; padding: 0; }
 html[data-mode="plain"] .secret-note summary { display: list-item; list-style: disclosure-closed inside; min-height: 44px; padding: 10px 0; }
 html[data-mode="plain"] .secret-note[open] summary { list-style-type: disclosure-open; }
 html[data-mode="plain"] .secret-note summary::-webkit-details-marker { display: inline; }
-html[data-mode="plain"] .envelope { display: none; }
+html[data-mode="plain"] .lightbulb-doodle { display: none; }
+html[data-mode="plain"] .secret-note summary .sr-only { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; white-space: normal; }
 html[data-mode="plain"] .handwritten { font: inherit; transform: none; margin: 15px 0; }
-html[data-mode="plain"] .secret-note summary .handwritten { font: inherit; }
-html[data-mode="plain"] .secret-note p { position: static; background: none; width: auto; border: 0; box-shadow: none; padding: 0; }
+html[data-mode="plain"] .secret-note p { position: static; background: none; width: auto; margin: 1em 0; border: 0; box-shadow: none; padding: 0; }
 html[data-mode="plain"] .hello-ticket { display: block; transform: none; background: none; border: 0; outline: 0; padding: 10px 0; text-align: left; width: auto; text-decoration: underline; box-shadow: none; }
 html[data-mode="plain"] .hello-ticket > span { display: none; }
 html[data-mode="plain"] .hello-ticket strong { font: inherit; border: 0; }
