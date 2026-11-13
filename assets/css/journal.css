@@ -431,43 +431,49 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
 }
 
 /* Plain mode changes presentation, never the available content. */
-html[data-mode="plain"] { --ink: #171717; --muted: #454545; --paper: #fff; --line: #bbb; --serif: var(--gh-font-heading, Impact, "Arial Narrow", "Arial Black", sans-serif); }
+html[data-mode="plain"] { --ink: #171717; --muted: #454545; --paper: #fff; --line: #bbb; --serif: Arial, sans-serif; }
 html[data-mode="plain"] body { background: #fff; font-family: Arial, sans-serif; font-size: 17px; line-height: 1.7; }
 html[data-mode="plain"] body::before { display: none; }
-html[data-mode="plain"] .desk { max-width: 850px; padding: 24px; }
-html[data-mode="plain"] .site-header { color: #171717; flex-wrap: wrap; }
-html[data-mode="plain"] .wordmark { font-family: Arial, sans-serif; font-size: 28px; letter-spacing: -1px; }
+html[data-mode="plain"] .desk { max-width: 960px; padding: 28px clamp(20px, 4vw, 40px); }
+html[data-mode="plain"] .site-header { color: var(--ink); flex-wrap: wrap; gap: 16px; margin-bottom: 12px; }
+html[data-mode="plain"] .wordmark { display: inline-flex; align-items: center; min-height: 44px; font-family: Arial, sans-serif; font-size: 28px; letter-spacing: -1px; transform: none; }
 html[data-mode="plain"] .wordmark > span[aria-hidden], html[data-mode="plain"] .header-note, html[data-mode="plain"] .mode-icon { display: none; }
-html[data-mode="plain"] .mode-toggle { border-color: #555; font-size: 12px; background: #fff; box-shadow: none; transform: none; }
-html[data-mode="plain"] .plain-intro { display: block; font-weight: bold; margin-block: 24px; }
+html[data-mode="plain"] .mode-toggle { max-width: 100%; border: 1px solid #555; padding: 8px 12px; gap: 8px; font: normal 14px/1.5 Arial, sans-serif; text-align: left; background: #fff; box-shadow: none; transform: none; }
+html[data-mode="plain"] .plain-intro { display: block; color: var(--muted); font-size: 14px; font-weight: normal; margin-block: 0 16px; }
 html[data-mode="plain"] .journal { display: flex; flex-direction: column; border: 0; border-radius: 0; box-shadow: none; background: none; }
 html[data-mode="plain"] .journal::before, html[data-mode="plain"] .journal::after, html[data-mode="plain"] .binding { display: none; }
-html[data-mode="plain"] .index-tabs { position: static; order: -1; width: auto; flex-direction: row; flex-wrap: wrap; gap: 8px 22px; padding: 15px 0; border-block: 1px solid #aaa; background: none; margin-bottom: 24px; }
-html[data-mode="plain"] .index-tab { display: block; min-height: 44px; flex: initial; background: none; border: 0; border-radius: 0; padding: 9px 0; box-shadow: none; font-size: 14px; text-decoration: underline; transform: none; }
+html[data-mode="plain"] .index-tabs { position: static; order: 0; width: auto; flex-direction: row; flex-wrap: wrap; gap: 0 24px; padding: 8px 0; border-block: 1px solid var(--line); background: none; margin-bottom: 40px; }
+html[data-mode="plain"] .index-tab { display: block; min-height: 44px; flex: initial; background: none; border: 0; border-radius: 0; padding: 9px 0; box-shadow: none; font-size: 15px; text-decoration: underline; transform: none; }
+html[data-mode="plain"] .index-tab:is(:hover, :focus-visible) { box-shadow: none; }
 html[data-mode="plain"] .index-tab > span { display: inline; writing-mode: horizontal-tb; white-space: normal; width: auto; min-height: 0; padding: 0; background: none; border: 0; box-shadow: none; font: inherit; transform: none; }
 html[data-mode="plain"] .index-tab::before, html[data-mode="plain"] .index-tab::after, html[data-mode="plain"] .index-tab > .tab-number, html[data-mode="plain"] .section-patch { display: none; }
-html[data-mode="plain"] .spread { display: block; min-height: 0; border-bottom: 1px solid #aaa; padding-bottom: 30px; margin-bottom: 30px; }
+html[data-mode="plain"] .spread { display: block; min-height: 0; border-bottom: 1px solid var(--line); padding-bottom: 48px; margin-bottom: 48px; scroll-margin-top: 24px; }
 html[data-mode="plain"] .paper-page { display: block; padding: 0; background: none !important; box-shadow: none !important; border: 0 !important; min-height: 0; }
 html[data-mode="plain"] .cover-collection, html[data-mode="plain"] .name-note, html[data-mode="plain"] .page-bottom,
 html[data-mode="plain"] .page-eyebrow, html[data-mode="plain"] .tiny-heading, html[data-mode="plain"] .tape,
 html[data-mode="plain"] .note-doodle, html[data-mode="plain"] .about-portrait, html[data-mode="plain"] .big-asterisk,
 html[data-mode="plain"] .project-sticker, html[data-mode="plain"] .contact-heart, html[data-mode="plain"] .welcome-badges,
 html[data-mode="plain"] .foil-sticker, html[data-mode="plain"] .sticker-toggle, html[data-mode="plain"] .sticker-sheet, html[data-mode="plain"] .sticker-layer { display: none; }
-html[data-mode="plain"] .name-collage { margin: 25px 0; max-width: none; line-height: 1.2; letter-spacing: -.04em; }
+html[data-mode="plain"] .name-collage { margin: 0 0 16px; max-width: none; line-height: 1.1; letter-spacing: -.045em; }
 html[data-mode="plain"] .name-collage > span[aria-hidden] { display: none; }
-html[data-mode="plain"] .name-text { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; font: bold 42px/1.2 Arial, sans-serif; text-transform: none; }
-html[data-mode="plain"] h1, html[data-mode="plain"] h2, html[data-mode="plain"] h3 { font-family: Arial, sans-serif; letter-spacing: -.03em; line-height: 1.2; }
-html[data-mode="plain"] h2, html[data-mode="plain"] .section-cover h2 { font-size: 30px; margin-block: 30px 20px; }
-html[data-mode="plain"] h2 em, html[data-mode="plain"] .welcome-note h2 > span:first-child { color: inherit; background: none; padding: 0; }
+html[data-mode="plain"] .name-text { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; font: bold clamp(36px, 6vw, 64px)/1.1 Arial, sans-serif; text-transform: none; }
+html[data-mode="plain"] h1, html[data-mode="plain"] h2, html[data-mode="plain"] h3 { font-family: Arial, sans-serif; font-weight: bold; letter-spacing: -.025em; line-height: 1.25; text-wrap: pretty; }
+html[data-mode="plain"] h2, html[data-mode="plain"] .section-cover h2 { font-size: clamp(28px, 4vw, 36px); margin-block: 16px 24px; }
+html[data-mode="plain"] h2 em, html[data-mode="plain"] .welcome-note h2 > span:first-child { color: inherit; background: none; padding: 0; font-style: normal; }
+html[data-mode="plain"] .welcome-note h2 { display: flex; flex-wrap: wrap; gap: 0 .3em; font-size: 24px; margin: 0 0 24px; letter-spacing: -.02em; }
+html[data-mode="plain"] .welcome-note h2 br { display: none; }
 html[data-mode="plain"] .welcome-note { margin: 0; }
-html[data-mode="plain"] p, html[data-mode="plain"] .welcome-note p { font-size: 17px; max-width: none; }
+html[data-mode="plain"] p, html[data-mode="plain"] .welcome-note p { font-size: 17px; max-width: 65ch; line-height: 1.7; }
+html[data-mode="plain"] .reno-introduction { margin: 0; }
+html[data-mode="plain"] .reno-introduction > p { margin: 0 0 24px; }
+html[data-mode="plain"] .welcome-note .welcome-signoff { color: var(--muted); font-size: 16px; margin: 0 0 20px; }
 html[data-mode="plain"] :is(.reno-video-panel, .new-york-video-panel) { background: #fff; box-shadow: none; }
 html[data-mode="plain"] .new-york-rain { display: none; }
 html[data-mode="plain"] .reno-video-close { background: #fff; }
-html[data-mode="plain"] .pink-note { background: none; border: 0; padding: 12px 0; margin: 15px 0; transform: none; box-shadow: none; text-decoration: underline; }
+html[data-mode="plain"] .pink-note { display: block; width: fit-content; max-width: 100%; background: none; border: 0; padding: 10px 0; margin: 0 0 12px; transform: none; box-shadow: none; text-decoration: underline; }
 html[data-mode="plain"] .note-label, html[data-mode="plain"] .note-title { display: none; }
 html[data-mode="plain"] .note-link { font-size: 17px; border: 0; }
-html[data-mode="plain"] .bottom-scraps { display: block; padding: 0; }
+html[data-mode="plain"] .bottom-scraps { display: block; padding: 0; margin: 0; }
 html[data-mode="plain"] .secret-note summary { display: list-item; list-style: disclosure-closed inside; min-height: 44px; padding: 10px 0; }
 html[data-mode="plain"] .secret-note[open] summary { list-style-type: disclosure-open; }
 html[data-mode="plain"] .secret-note summary::-webkit-details-marker { display: inline; }
@@ -475,18 +481,30 @@ html[data-mode="plain"] .lightbulb-doodle { display: none; }
 html[data-mode="plain"] .secret-note summary .sr-only { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; white-space: normal; }
 html[data-mode="plain"] .handwritten { font: inherit; transform: none; margin: 15px 0; }
 html[data-mode="plain"] .secret-note p { position: static; background: none; width: auto; margin: 1em 0; border: 0; box-shadow: none; padding: 0; }
-html[data-mode="plain"] .hello-ticket { display: block; transform: none; background: none; border: 0; outline: 0; padding: 10px 0; text-align: left; width: auto; text-decoration: underline; box-shadow: none; }
+html[data-mode="plain"] .hello-ticket { display: block; transform: none; background: none; border: 0; outline: revert; padding: 10px 0; margin: 8px 0; text-align: left; width: fit-content; max-width: 100%; text-decoration: underline; box-shadow: none; }
 html[data-mode="plain"] .hello-ticket > span { display: none; }
-html[data-mode="plain"] .hello-ticket strong { font: inherit; border: 0; }
+html[data-mode="plain"] .hello-ticket strong { font: bold 17px/1.7 Arial, sans-serif; border: 0; margin: 0; padding: 0; white-space: normal; }
 html[data-mode="plain"] .empty-note { background: none; padding: 0; border: 0; box-shadow: none; transform: none; margin: 20px 0; }
+html[data-mode="plain"] .section-content { max-width: 65ch; }
+html[data-mode="plain"] .section-content h3 { font-size: 24px; }
+html[data-mode="plain"] .extra-links h3 { font-size: 18px; text-transform: none; letter-spacing: 0; }
 html[data-mode="plain"] .entry-card h3 { font-family: Arial, sans-serif; font-size: 22px; text-decoration: underline; }
+html[data-mode="plain"] .entry-card > a:hover h3 { text-decoration-color: currentColor; }
+html[data-mode="plain"] .entry-meta { font-size: 14px; letter-spacing: 0; text-transform: none; }
 html[data-mode="plain"] .entry-card { border-bottom: 1px solid var(--line); }
-html[data-mode="plain"] .archive-grid { display: block; }
-html[data-mode="plain"] .contact-link { font: inherit; }
+html[data-mode="plain"] :is(.archive, .article) { min-height: 0; padding: 0 0 40px; }
+html[data-mode="plain"] :is(.archive, .article) h1 { font-size: clamp(36px, 6vw, 56px); }
+html[data-mode="plain"] .archive-grid { display: block; max-width: 65ch; }
+html[data-mode="plain"] .gh-content { max-width: 65ch; }
+html[data-mode="plain"] :is(.kg-width-wide, .kg-width-full) { width: 100%; max-width: 100%; margin-left: 0 !important; }
+html[data-mode="plain"] :is(.byline, .back-link, .article-tags, figcaption, .pagination, .text-link) { font-size: 14px; }
+html[data-mode="plain"] .contact-link { display: inline-block; font: bold 18px/1.7 Arial, sans-serif; padding: 8px 0; }
 html[data-mode="plain"] .contact-content > .handwritten { display: block; }
-html[data-mode="plain"] .clippings a { padding: 8px 0; color: inherit; background: none; transform: none; text-decoration: underline; font: inherit; }
-html[data-mode="plain"] .site-footer { color: #444; font-size: 11px; align-items: flex-start; flex-direction: column; text-align: left; }
-html[data-mode="plain"] :focus-visible { outline-color: #174eaa; }
+html[data-mode="plain"] .clippings { gap: 0 24px; margin: 0; }
+html[data-mode="plain"] .clippings a { min-height: 44px; padding: 10px 0; color: var(--muted); background: none; transform: none; text-decoration: underline; font: normal 14px/1.7 Arial, sans-serif; }
+html[data-mode="plain"] .site-footer { color: var(--muted); font: normal 14px/1.7 Arial, sans-serif; gap: 8px; margin-top: 0; align-items: flex-start; flex-direction: column; text-align: left; }
+html[data-mode="plain"] :focus-visible { outline: 3px solid #174eaa; outline-offset: 4px; }
+html[data-mode="plain"] main:focus { outline: 3px solid #174eaa; outline-offset: 6px; }
 
 @media print {
     body { background: white; }
