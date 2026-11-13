@@ -92,12 +92,29 @@ main:focus { outline: none; }
 .cover-collection { display: flex; align-items: flex-start; gap: 20px; margin: 30px 0 28px; }
 .portrait-print { position: relative; display: block; width: 65%; background: linear-gradient(105deg, #fff8, transparent 30%, #a18b5c18), #f1ecde; padding: 10px 10px 19px; transform: rotate(-7deg); box-shadow: 1px 2px 3px #49372166, 5px 9px 10px #49372133; text-decoration: none; transition: transform .2s ease; border: 1px solid #b9ad96; border-bottom: 3px double #b9ad96; }
 .portrait-print:hover, .portrait-print:focus-visible { transform: rotate(-3deg) translateY(-4px); }
-.portrait-print img { width: 100%; display: block; filter: sepia(.18) saturate(.7) contrast(1.1); }
+.portrait-print img { width: 100%; display: block; }
+.portrait-image { position: relative; display: block; }
+.portrait-doodles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; }
+.portrait-doodles path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.portrait-print:is(:hover, :focus-visible) .portrait-doodles { opacity: 1; }
+.portrait-print:is(:hover, :focus-visible) .portrait-doodles path { animation: portrait-draw .65s ease-out both; }
+.portrait-print:is(:hover, :focus-visible) .doodle-tiara { animation-delay: .4s; }
+.portrait-print:is(:hover, :focus-visible) .doodle-stars { animation-delay: .85s; }
+@keyframes portrait-draw { to { stroke-dashoffset: 0; } }
 .photo-caption { display: block; font-family: "Courier New", monospace; font-weight: bold; font-size: 10px; margin-top: 10px; text-align: center; line-height: 1.4; }
 .tape { position: absolute; z-index: 1; height: 35px; width: 112px; background: linear-gradient(90deg, #bca56a55, #f0e2b155 20% 75%, #ae945b55), repeating-linear-gradient(1deg, #b09a6333 0 1px, transparent 1px 3px), #ddcb95b8; box-shadow: inset 0 1px #fff5, inset 0 -1px #8e784d66; left: 50%; top: -14px; transform: translateX(-50%) rotate(-5deg); clip-path: polygon(4% 0,97% 5%,94% 20%,100% 38%,96% 55%,100% 76%,97% 97%,1% 100%,4% 70%,0 60%,5% 40%,1% 18%); }
 .tape-top { transform: translateX(-50%) rotate(9deg); }
-.hover-label { position: absolute; left: 5%; right: 5%; bottom: 17%; padding: 8px; background: var(--acid); font-size: 12px; font-weight: bold; text-align: center; opacity: 0; transform: translateY(3px); transition: opacity .2s, transform .2s; }
-.portrait-print:is(:hover, :focus-visible) .hover-label { opacity: 1; transform: translateY(0); }
+.postcrossing-postcard { display: flex; flex-direction: column; align-items: center; width: min(100%, 280px); margin: 38px 0 30px 12px; text-align: center; text-decoration: none; transform: rotate(4deg); transition: transform .2s; }
+.postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(-2deg); }
+.postcrossing-envelope { display: block; width: 100%; overflow: visible; filter: drop-shadow(2px 4px 3px #49372155); }
+.envelope-paper { fill: #fffdf6; stroke: #b9ad96; stroke-width: 2; }
+.envelope-seams { fill: none; stroke: #b9ad96; stroke-width: 2; }
+.envelope-flap { fill: #eee8d8; stroke: #b9ad96; stroke-width: 2; }
+.envelope-stamp { fill: var(--pink); stroke: #171717; stroke-width: 2; stroke-dasharray: 3 2; }
+.postcrossing-label { position: relative; background: #eee1bb; padding: 4px 12px; margin-top: -13px; font: bold 12px/1.4 "Courier New", monospace; box-shadow: 1px 2px 3px #48352044; }
+.postcrossing-note { font: 20px/1.4 var(--hand); margin-top: 4px; }
+.postcrossing-stats { font: 11px/1.6 var(--sans); }
+.postcrossing-date { display: block; font-size: 10px; }
 .small-collection { flex: 1; display: flex; flex-direction: column; align-items: center; padding-top: 4px; gap: 20px; }
 .postage-stamp { display: flex; flex-direction: column; align-items: center; width: 106px; background: repeating-linear-gradient(0deg, #6e6c4020 0 1px, transparent 1px 3px), #d8d0b1; border: 3px double #65724f; outline: 2px dashed #c3b991; outline-offset: 2px; padding: 9px 5px 6px; font-family: "Courier New", monospace; font-weight: bold; font-size: 9px; line-height: 1.5; text-align: center; transform: rotate(10deg); letter-spacing: -.04em; box-shadow: 2px 4px 5px #48352044; }
 .stamp-star { font-size: 31px; line-height: 1.2; color: #171717; }
@@ -182,7 +199,7 @@ h2 em, .archive h1 em { font-weight: inherit; color: #171717; font-style: normal
 .section-cover > .handwritten { margin-top: 65px; font-size: 25px; transform: rotate(-4deg); }
 .section-cover h2 { font-size: clamp(34px, 4vw, 56px); margin-top: 22px; overflow-wrap: anywhere; }
 .section-cover p { max-width: 320px; font-size: 15px; }
-.about-portrait { width: 70%; align-self: center; transform: rotate(-7deg); border: 10px solid #dedcd2; margin: 25px; box-shadow: 2px 3px 0 #171717; filter: grayscale(1) contrast(1.65); }
+.about-portrait { width: 70%; align-self: center; transform: rotate(-7deg); border: 10px solid #dedcd2; margin: 25px; box-shadow: 2px 3px 0 #171717; }
 .section-content { padding-top: 85px; }
 .section-content > h3, .empty-note h3, .contact-content h3 { font-family: var(--serif); font-size: 30px; font-weight: normal; line-height: 1.2; }
 .section-content p { font-size: 15px; line-height: 1.85; }
@@ -328,11 +345,12 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
 }
 @media (min-width: 700px) and (max-width: 1100px) {
     .cover-page, .welcome-page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); column-gap: clamp(24px, 4vw, 44px); align-items: start; padding-bottom: 80px; }
-    .cover-page { grid-template-areas: "eyebrow eyebrow" "name collection" "note collection"; grid-template-rows: auto auto 1fr; min-height: 0; }
+    .cover-page { grid-template-areas: "eyebrow eyebrow" "name collection" "note collection" "postcard postcard"; grid-template-rows: auto auto auto 1fr; min-height: 0; }
     .cover-page > .page-eyebrow { grid-area: eyebrow; }
     .cover-page > .name-collage { grid-area: name; max-width: none; margin-top: 32px; }
     .cover-page > .name-note { grid-area: note; margin: 18px 0 0 5px; }
     .cover-page > .cover-collection { grid-area: collection; width: 100%; margin: 40px 0 0; justify-self: center; }
+    .cover-page > .postcrossing-postcard { grid-area: postcard; justify-self: center; margin-top: 22px; }
     .cover-page .first-name { font-size: clamp(62px, 8.9vw, 98px); }
     .cover-page .middle-name { font-size: clamp(54px, 7.6vw, 82px); }
     .cover-page .last-name { font-size: clamp(47px, 6.7vw, 72px); }
@@ -428,6 +446,8 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
     .new-york-rain { display: none; }
+    .portrait-doodles path { stroke-dashoffset: 0; }
+    .portrait-print:is(:hover, :focus-visible) { transform: rotate(-7deg); }
 }
 
 /* Plain mode changes presentation, never the available content. */
@@ -460,6 +480,10 @@ html[data-mode="plain"] h1, html[data-mode="plain"] h2, html[data-mode="plain"] 
 html[data-mode="plain"] h2, html[data-mode="plain"] .section-cover h2 { font-size: 30px; margin-block: 30px 20px; }
 html[data-mode="plain"] h2 em, html[data-mode="plain"] .welcome-note h2 > span:first-child { color: inherit; background: none; padding: 0; }
 html[data-mode="plain"] .welcome-note { margin: 0; }
+html[data-mode="plain"] .postcrossing-postcard { width: auto; align-items: flex-start; margin: 20px 0; transform: none; text-align: left; }
+html[data-mode="plain"] .postcrossing-envelope { display: none; }
+html[data-mode="plain"] .postcrossing-label { font: inherit; text-decoration: underline; background: none; padding: 8px 0; margin: 0; box-shadow: none; }
+html[data-mode="plain"] .postcrossing-note, html[data-mode="plain"] .postcrossing-stats, html[data-mode="plain"] .postcrossing-date { font: inherit; }
 html[data-mode="plain"] p, html[data-mode="plain"] .welcome-note p { font-size: 17px; max-width: none; }
 html[data-mode="plain"] :is(.reno-video-panel, .new-york-video-panel) { background: #fff; box-shadow: none; }
 html[data-mode="plain"] .new-york-rain { display: none; }
