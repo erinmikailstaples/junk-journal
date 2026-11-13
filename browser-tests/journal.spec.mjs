@@ -372,14 +372,65 @@ test('condensed plain mode stays a single readable document', async ({ page }) =
     await expect(page.locator('.cover-page')).toHaveCSS('display', 'block');
     await expect(page.locator('.welcome-page')).toHaveCSS('display', 'block');
     await expect(page.locator('.section-cover').first()).toHaveCSS('display', 'block');
-    await expect(page.locator('.welcome-note h2')).toHaveCSS('font-size', '30px');
+    await expect(page.locator('.welcome-note h2')).toHaveCSS('font-size', '24px');
     const maxWidth = await page.locator('#about .section-content').evaluate(section => {
         const content = document.createElement('article');
         content.className = 'gh-content';
         section.append(content);
         return getComputedStyle(content).maxWidth;
     });
-    expect(maxWidth).toBe('none');
+    expect(maxWidth).toMatch(/^\d+(?:\.\d+)?px$/);
+    expect(parseFloat(maxWidth)).toBeLessThan(650);
+});
+
+test('plain hierarchy, reading measure, and focus order hold at every size', async ({ page }) => {
+    for (const width of [320, 390, 768, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto('/');
+        if (await page.locator('html').getAttribute('data-mode') !== 'plain') {
+            await page.locator('.mode-toggle').click();
+        }
+        const layout = await page.evaluate(() => {
+            const nav = document.querySelector('.index-tabs');
+            const main = document.querySelector('main');
+            const name = document.querySelector('.name-text');
+            const mission = document.querySelector('.welcome-note h2');
+            const introduction = document.querySelector('.reno-introduction > p');
+            return {
+                navBeforeMain: Boolean(nav.compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING),
+                nameSize: parseFloat(getComputedStyle(name).fontSize),
+                missionSize: parseFloat(getComputedStyle(mission).fontSize),
+                introductionWidth: introduction.getBoundingClientRect().width,
+                introductionMeasure: parseFloat(getComputedStyle(introduction).maxWidth),
+                overflowing: document.documentElement.scrollWidth > innerWidth,
+                headingCount: document.querySelectorAll('h1').length
+            };
+        });
+        expect(layout.navBeforeMain).toBe(true);
+        expect(layout.nameSize).toBeGreaterThan(layout.missionSize * 1.4);
+        expect(layout.introductionWidth).toBeLessThanOrEqual(layout.introductionMeasure + 1);
+        expect(layout.overflowing, `${width}px overflow`).toBe(false);
+        expect(layout.headingCount).toBe(1);
+        await expect(page.locator('[data-journal-page]:visible')).toHaveCount(5);
+
+        await page.locator('.mode-toggle').focus();
+        await page.keyboard.press('Tab');
+        await expect(page.locator('.index-tabs a').first()).toBeFocused();
+        await page.locator('.index-tabs a').last().focus();
+        await page.keyboard.press('Tab');
+        await expect(page.locator('.postcrossing-postcard')).toBeFocused();
+        await expect(page.locator('.postcrossing-postcard')).toHaveCSS('outline-width', '3px');
+        const ticket = page.locator('.hello-ticket');
+        await ticket.focus();
+        await expect(ticket).toHaveCSS('outline-style', 'solid');
+        await expect(ticket).toHaveCSS('outline-width', '3px');
+    }
+    await page.locator('.index-tabs [data-section="writing"]').click();
+    await expect(page.locator('#writing-title')).toBeFocused();
+    await page.locator('.skip-link').focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#site-main')).toBeFocused();
+    await expect(page.locator('#site-main')).toHaveCSS('outline-width', '3px');
 });
 
 test('tablet article titles do not leave their arrows on a line alone', async ({ page }) => {
