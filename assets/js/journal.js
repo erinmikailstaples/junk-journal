@@ -180,6 +180,9 @@
                 close({ dismiss: true, restoreFocus: true });
             });
             videos.push({ introduction, close });
+        });
+    }
+
     const note = document.querySelector('.secret-note');
 
     if (note) {
