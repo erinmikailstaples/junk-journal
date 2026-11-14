@@ -96,7 +96,9 @@ main:focus { outline: none; }
 .cover-collection > .small-collection { grid-column: 2; grid-row: 4; margin-top: 32px; }
 .cover-collection .camp-patch { width: 70px; }
 .cover-collection .camp-patch img { width: 64px; }
-.cover-collection .resume-scrap { display: inline-flex; align-items: center; min-height: 28px; font-size: 10px; }
+.cover-collection .camp-patch:first-child { --patch-rotation: 8deg; --patch-x: -5px; }
+.cover-collection .camp-patch:nth-child(2) { --patch-rotation: -9deg; --patch-x: 4px; --patch-y: 8px; }
+.cover-collection .resume-scrap { display: inline-flex; align-items: center; min-height: 28px; margin-top: 8px; font-size: 10px; transform: rotate(5deg); }
 .cover-collection .arrow-note { display: none; }
 .portrait-print { position: relative; display: block; width: 65%; background: linear-gradient(105deg, #fff8, transparent 30%, #a18b5c18), #f1ecde; padding: 10px 10px 19px; transform: rotate(-7deg); box-shadow: 1px 2px 3px #49372166, 5px 9px 10px #49372133; text-decoration: none; transition: transform .2s ease; border: 1px solid #b9ad96; border-bottom: 3px double #b9ad96; }
 .portrait-print:hover, .portrait-print:focus-visible { transform: rotate(-3deg) translateY(-4px); }
@@ -112,7 +114,7 @@ main:focus { outline: none; }
 .photo-caption { display: block; font-family: "Courier New", monospace; font-weight: bold; font-size: 10px; margin-top: 10px; text-align: center; line-height: 1.4; }
 .tape { position: absolute; z-index: 1; height: 35px; width: 112px; background: linear-gradient(90deg, #bca56a55, #f0e2b155 20% 75%, #ae945b55), repeating-linear-gradient(1deg, #b09a6333 0 1px, transparent 1px 3px), #ddcb95b8; box-shadow: inset 0 1px #fff5, inset 0 -1px #8e784d66; left: 50%; top: -14px; transform: translateX(-50%) rotate(-5deg); clip-path: polygon(4% 0,97% 5%,94% 20%,100% 38%,96% 55%,100% 76%,97% 97%,1% 100%,4% 70%,0 60%,5% 40%,1% 18%); }
 .tape-top { transform: translateX(-50%) rotate(9deg); }
-.postcrossing-postcard { position: relative; display: flex; flex-direction: column; align-items: center; grid-column: 2; grid-row: 5; justify-self: end; width: 100%; max-width: 180px; margin: 26px 0 65px; text-align: center; text-decoration: none; transform: rotate(var(--postcard-rotation, 4deg)); transition: transform .2s; }
+.postcrossing-postcard { position: relative; display: flex; flex-direction: column; align-items: center; grid-column: 2; grid-row: 5; justify-self: end; width: 100%; max-width: 180px; margin: 26px 0 65px; text-align: center; text-decoration: none; transform: rotate(var(--postcard-rotation, -4deg)); transition: transform .2s; }
 .postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(0) translateY(-4px); }
 .postcrossing-artwork { display: block; width: 100%; overflow: visible; filter: drop-shadow(2px 4px 3px #49372155); }
 .postcard-paper { fill: #fffdf6; stroke: #b9ad96; stroke-width: 2; }
@@ -132,10 +134,10 @@ main:focus { outline: none; }
 .small-collection { flex: 1; display: flex; flex-direction: column; align-items: center; padding-top: 4px; gap: 20px; }
 .postage-stamp { display: flex; flex-direction: column; align-items: center; width: 106px; background: repeating-linear-gradient(0deg, #6e6c4020 0 1px, transparent 1px 3px), #d8d0b1; border: 3px double #65724f; outline: 2px dashed #c3b991; outline-offset: 2px; padding: 9px 5px 6px; font-family: "Courier New", monospace; font-weight: bold; font-size: 9px; line-height: 1.5; text-align: center; transform: rotate(10deg); letter-spacing: -.04em; box-shadow: 2px 4px 5px #48352044; }
 .stamp-star { font-size: 31px; line-height: 1.2; color: #171717; }
-.camp-patch { display: flex; flex-direction: column; align-items: center; width: 119px; text-align: center; text-decoration: none; transform: rotate(9deg); transition: transform .2s; }
+.camp-patch { display: flex; flex-direction: column; align-items: center; width: 119px; text-align: center; text-decoration: none; transform: translate(var(--patch-x, 0px), var(--patch-y, 0px)) rotate(var(--patch-rotation, 9deg)); transition: transform .2s; }
 .camp-patch img { display: block; width: 112px; filter: drop-shadow(2px 4px 2px #48352066); }
 .camp-patch > span:not(.sr-only) { background: #eee1bb; padding: 3px 6px; margin-top: -6px; font: bold 10px/1.3 "Courier New", monospace; box-shadow: 1px 2px 3px #48352044; }
-.camp-patch:is(:hover, :focus-visible) { transform: rotate(-4deg); }
+.camp-patch:is(:hover, :focus-visible) { transform: translate(var(--patch-x, 0px), var(--patch-y, 0px)) rotate(-4deg); }
 .section-patch { width: 180px; align-self: center; margin: 30px 0; transform: rotate(-9deg); filter: drop-shadow(3px 6px 3px #48352066); }
 .resume-scrap { background: #171717; color: #fff; padding: 4px 9px; font-family: "Courier New", monospace; font-size: 11px; white-space: nowrap; transform: rotate(-6deg); }
 .arrow-note { font-size: 14px; transform: rotate(9deg); line-height: 1.2; text-align: center; }
@@ -374,8 +376,9 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .cover-page > .name-note { grid-area: note; margin: 18px 0 0 5px; }
     .cover-collection > .portrait-print { grid-area: portrait; width: calc(100% - 14px); justify-self: center; margin: 44px 0 32px; }
     .cover-collection > .small-collection { grid-area: scraps; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 16px; margin: 30px 0 0; padding: 0 4px; }
-    .cover-collection .small-collection > :nth-child(2) { transform: rotate(-8deg) translateY(8px); }
-    .cover-page > .postcrossing-postcard { --postcard-rotation: -6deg; grid-area: postcard; width: 180px; justify-self: start; margin: 28px 0 24px 18px; }
+    .cover-collection .camp-patch:nth-child(2) { --patch-y: 18px; }
+    .cover-collection .resume-scrap { align-self: flex-start; margin: 8px 0 0 4px; }
+    .cover-page > .postcrossing-postcard { --postcard-rotation: -6deg; grid-area: postcard; width: 180px; justify-self: start; margin: 34px 0 24px 40px; }
     .cover-page .postcrossing-stats { left: 0; right: auto; }
     .cover-page .first-name { font-size: clamp(62px, 8.9vw, 98px); }
     .cover-page .middle-name { font-size: clamp(54px, 7.6vw, 82px); }
@@ -474,7 +477,8 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .new-york-rain { display: none; }
     .portrait-doodles path { stroke-dashoffset: 0; }
     .portrait-print:is(:hover, :focus-visible) { transform: rotate(-7deg); }
-    .postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(var(--postcard-rotation, 4deg)); }
+    .postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(var(--postcard-rotation, -4deg)); }
+    .cover-collection .camp-patch:is(:hover, :focus-visible) { transform: translate(var(--patch-x, 0px), var(--patch-y, 0px)) rotate(var(--patch-rotation, 9deg)); }
 }
 
 /* Plain mode changes presentation, never the available content. */

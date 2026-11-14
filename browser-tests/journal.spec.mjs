@@ -85,6 +85,14 @@ test('portrait leads the scattered scraps and Postcrossing stays clear of the fo
         expect(box.x, `${width}px left edge`).toBeGreaterThanOrEqual(0);
         expect(box.x + box.width, `${width}px right edge`).toBeLessThanOrEqual(width);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        for (const patch of await page.locator('.cover-collection .camp-patch').all()) {
+            const restingTransform = await patch.evaluate(element => getComputedStyle(element).transform);
+            await patch.focus();
+            await expect(patch).toHaveCSS('transform', restingTransform);
+            await patch.hover();
+            await expect(patch).toHaveCSS('transform', restingTransform);
+            await page.mouse.move(0, 0);
+        }
         const idleTransform = await postcard.evaluate(element => getComputedStyle(element).transform);
         await postcard.focus();
         await expect(postcard).toHaveCSS('transform', idleTransform);
