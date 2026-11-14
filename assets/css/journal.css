@@ -89,9 +89,19 @@ main:focus { outline: none; }
 .c8 { font-family: "Abril Fatface", Didot, Georgia, serif; font-size: .9em; background-color: #f2a13d; --r: 9deg; }
 .handwritten { font-family: var(--hand); font-size: 20px; font-weight: normal; }
 .name-note { display: block; transform: rotate(-3deg); margin: 18px 0 12px 12px; font-size: 14px; line-height: 1.3; }
-.cover-collection { display: flex; align-items: flex-start; gap: 20px; margin: 30px 0 28px; }
-.portrait-print { position: relative; display: block; width: 65%; background: linear-gradient(105deg, #fff8, transparent 30%, #a18b5c18), #f1ecde; padding: 10px 10px 19px; transform: rotate(-7deg); box-shadow: 1px 2px 3px #49372166, 5px 9px 10px #49372133; text-decoration: none; transition: transform .2s ease; border: 1px solid #b9ad96; border-bottom: 3px double #b9ad96; }
-.portrait-print:hover, .portrait-print:focus-visible { transform: rotate(-3deg) translateY(-4px); }
+.cover-page { display: grid; grid-template-columns: minmax(0, 1fr) 140px; column-gap: 20px; align-content: start; align-items: start; }
+.cover-page > :is(.page-eyebrow, .name-collage, .name-note) { grid-column: 1 / -1; }
+.cover-collection { display: contents; }
+.cover-collection > .portrait-print { grid-column: 1; grid-row: 4 / 6; width: 100%; margin: 34px 0 70px; }
+.cover-collection > .small-collection { grid-column: 2; grid-row: 4; margin-top: 32px; }
+.cover-collection .camp-patch { width: 70px; }
+.cover-collection .camp-patch img { width: 64px; }
+.cover-collection .camp-patch:first-child { --patch-rotation: 8deg; --patch-x: -5px; }
+.cover-collection .camp-patch:nth-child(2) { --patch-rotation: -9deg; --patch-x: 4px; --patch-y: 8px; }
+.cover-collection .resume-scrap { display: inline-flex; align-items: center; min-height: 28px; margin-top: 8px; font-size: 10px; transform: rotate(5deg); }
+.cover-collection .arrow-note { display: none; }
+.portrait-print { position: relative; display: block; width: 65%; background: linear-gradient(105deg, #fff8, transparent 30%, #a18b5c18), #f1ecde; padding: 10px 10px 19px; transform: rotate(7deg); box-shadow: 1px 2px 3px #49372166, 5px 9px 10px #49372133; text-decoration: none; transition: transform .2s ease; border: 1px solid #b9ad96; border-bottom: 3px double #b9ad96; }
+.portrait-print:hover, .portrait-print:focus-visible { transform: rotate(3deg) translateY(-4px); }
 .portrait-print img { width: 100%; display: block; }
 .portrait-image { position: relative; display: block; }
 .portrait-doodles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; }
@@ -104,28 +114,30 @@ main:focus { outline: none; }
 .photo-caption { display: block; font-family: "Courier New", monospace; font-weight: bold; font-size: 10px; margin-top: 10px; text-align: center; line-height: 1.4; }
 .tape { position: absolute; z-index: 1; height: 35px; width: 112px; background: linear-gradient(90deg, #bca56a55, #f0e2b155 20% 75%, #ae945b55), repeating-linear-gradient(1deg, #b09a6333 0 1px, transparent 1px 3px), #ddcb95b8; box-shadow: inset 0 1px #fff5, inset 0 -1px #8e784d66; left: 50%; top: -14px; transform: translateX(-50%) rotate(-5deg); clip-path: polygon(4% 0,97% 5%,94% 20%,100% 38%,96% 55%,100% 76%,97% 97%,1% 100%,4% 70%,0 60%,5% 40%,1% 18%); }
 .tape-top { transform: translateX(-50%) rotate(9deg); }
-.postcrossing-postcard { display: flex; flex-direction: column; align-items: center; width: min(100%, 280px); margin: 38px 0 30px 12px; text-align: center; text-decoration: none; transform: rotate(4deg); transition: transform .2s; }
-.postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(-2deg); }
+.postcrossing-postcard { position: relative; display: flex; flex-direction: column; align-items: center; grid-column: 2; grid-row: 5; justify-self: end; width: 100%; max-width: 180px; margin: 26px 0 65px; text-align: center; text-decoration: none; transform: rotate(var(--postcard-rotation, -4deg)); transition: transform .2s; }
+.postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(0) translateY(-4px); }
 .postcrossing-artwork { display: block; width: 100%; overflow: visible; filter: drop-shadow(2px 4px 3px #49372155); }
 .postcard-paper { fill: #fffdf6; stroke: #b9ad96; stroke-width: 2; }
 .postcard-lines { stroke: #b9ad96; stroke-width: 2; }
 .postcard-greeting { fill: var(--ink); font: 28px var(--hand); }
 .postcard-stamp { fill: var(--pink); stroke: #171717; stroke-width: 2; stroke-dasharray: 3 2; }
-.postcrossing-label { position: relative; background: #eee1bb; padding: 4px 12px; margin-top: -13px; font: bold 12px/1.4 "Courier New", monospace; box-shadow: 1px 2px 3px #48352044; }
-.postcrossing-note { font: 20px/1.4 var(--hand); margin-top: 4px; }
-.postcrossing-stats { font: 11px/1.6 var(--sans); visibility: hidden; }
-.postcrossing-postcard:is(:hover, :focus-visible) .postcrossing-stats { visibility: visible; }
-.postcrossing-date { display: block; font-size: 10px; }
+.postcrossing-label { position: relative; background: #eee1bb; padding: 4px 8px; margin-top: -8px; font: bold 10px/1.4 "Courier New", monospace; box-shadow: 1px 2px 3px #48352044; }
+.postcrossing-note { font: 15px/1.3 var(--hand); margin-top: 4px; }
+.postcrossing-stats { position: absolute; z-index: 2; bottom: 54px; right: 0; width: 230px; padding: 12px; border: 2px solid var(--ink); background: #fffdf6; box-shadow: 4px 4px 0 var(--ink); font: 13px/1.6 var(--sans); visibility: hidden; }
+.postcrossing-postcard:is(:hover, :focus-visible):not(.postcrossing-dismissed) .postcrossing-stats { visibility: visible; }
+.postcrossing-distance { display: block; margin-block: 4px; }
+.postcrossing-distance strong { display: block; font-size: 22px; line-height: 1.3; }
+.postcrossing-date { display: block; font-size: 11px; }
 @media (hover: none), (pointer: coarse) {
-    .postcrossing-stats { visibility: visible; }
+    .postcrossing-stats { position: static; width: 100%; margin-top: 12px; visibility: visible; }
 }
 .small-collection { flex: 1; display: flex; flex-direction: column; align-items: center; padding-top: 4px; gap: 20px; }
 .postage-stamp { display: flex; flex-direction: column; align-items: center; width: 106px; background: repeating-linear-gradient(0deg, #6e6c4020 0 1px, transparent 1px 3px), #d8d0b1; border: 3px double #65724f; outline: 2px dashed #c3b991; outline-offset: 2px; padding: 9px 5px 6px; font-family: "Courier New", monospace; font-weight: bold; font-size: 9px; line-height: 1.5; text-align: center; transform: rotate(10deg); letter-spacing: -.04em; box-shadow: 2px 4px 5px #48352044; }
 .stamp-star { font-size: 31px; line-height: 1.2; color: #171717; }
-.camp-patch { display: flex; flex-direction: column; align-items: center; width: 119px; text-align: center; text-decoration: none; transform: rotate(9deg); transition: transform .2s; }
+.camp-patch { display: flex; flex-direction: column; align-items: center; width: 119px; text-align: center; text-decoration: none; transform: translate(var(--patch-x, 0px), var(--patch-y, 0px)) rotate(var(--patch-rotation, 9deg)); transition: transform .2s; }
 .camp-patch img { display: block; width: 112px; filter: drop-shadow(2px 4px 2px #48352066); }
 .camp-patch > span:not(.sr-only) { background: #eee1bb; padding: 3px 6px; margin-top: -6px; font: bold 10px/1.3 "Courier New", monospace; box-shadow: 1px 2px 3px #48352044; }
-.camp-patch:is(:hover, :focus-visible) { transform: rotate(-4deg); }
+.camp-patch:is(:hover, :focus-visible) { transform: translate(var(--patch-x, 0px), var(--patch-y, 0px)) rotate(-4deg); }
 .section-patch { width: 180px; align-self: center; margin: 30px 0; transform: rotate(-9deg); filter: drop-shadow(3px 6px 3px #48352066); }
 .resume-scrap { background: #171717; color: #fff; padding: 4px 9px; font-family: "Courier New", monospace; font-size: 11px; white-space: nowrap; transform: rotate(-6deg); }
 .arrow-note { font-size: 14px; transform: rotate(9deg); line-height: 1.2; text-align: center; }
@@ -316,15 +328,24 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .paper-page { padding: 25px 28px 50px; }
     .spread > .paper-page:first-child { border-right: 0; border-bottom: 1px solid var(--line); box-shadow: none; }
     .spread > .paper-page:last-child { box-shadow: none; }
+    .home-spread { background-color: var(--paper); background-image: radial-gradient(ellipse at 3% 50%, #93784b24, transparent 45%), radial-gradient(ellipse at 90% 95%, #ac875526, transparent 25%), repeating-linear-gradient(0deg, transparent, transparent 3px, #00000006 3px, #00000006 4px); }
+    .home-spread > .paper-page:is(:first-child, :last-child) { border-bottom: 0; background: none; }
+    .home-spread > .welcome-page { isolation: isolate; }
+    .home-spread > .welcome-page::before { content: ""; position: absolute; z-index: -1; inset: 76px 0 0; pointer-events: none; background-image: linear-gradient(90deg, transparent 23px, #b0476e40 23px, #b0476e40 25px, transparent 25px), repeating-linear-gradient(180deg, transparent, transparent 27px, #586dd520 27px, #586dd520 28px); }
     .cover-page { min-height: 720px; }
     .name-collage { max-width: 380px; margin: 30px 0 0; }
     .first-name { font-size: clamp(56px, 15vw, 104px); }
     .middle-name { font-size: clamp(46px, 12.5vw, 88px); }
     .last-name { font-size: clamp(40px, 11vw, 78px); }
     .name-note { font-size: 13px; margin-left: 5px; }
-    .cover-collection { max-width: 370px; margin: 32px 0 20px; gap: 20px; }
-    .portrait-print { width: 62%; }
-    .small-collection { gap: 22px; }
+    .cover-page { grid-template-columns: minmax(0, 1fr) 68px; column-gap: 18px; min-height: 0; padding-bottom: 80px; }
+    .cover-collection > .portrait-print { grid-row: 4; margin: 32px 0 0; }
+    .cover-collection > .small-collection { margin-top: 40px; }
+    .cover-page > .postcrossing-postcard { grid-column: 1 / -1; width: min(42vw, 170px); margin: 24px 8px 20px 0; }
+    .small-collection { gap: 14px; }
+    .cover-collection .camp-patch { width: 64px; }
+    .cover-collection .camp-patch img { width: 58px; }
+    .cover-collection .resume-scrap { font-size: 9px; }
     .postage-stamp { width: 83px; font-size: 8px; }
     .camp-patch { width: 96px; }
     .camp-patch img { width: 90px; }
@@ -349,12 +370,16 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
 }
 @media (min-width: 700px) and (max-width: 1100px) {
     .cover-page, .welcome-page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); column-gap: clamp(24px, 4vw, 44px); align-items: start; padding-bottom: 80px; }
-    .cover-page { grid-template-areas: "eyebrow eyebrow" "name collection" "note collection" "postcard postcard"; grid-template-rows: auto auto auto 1fr; min-height: 0; }
+    .cover-page { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); grid-template-areas: "eyebrow eyebrow" "name portrait" "note portrait" "scraps portrait" "postcard portrait"; grid-template-rows: auto max-content max-content max-content 1fr; min-height: 0; }
     .cover-page > .page-eyebrow { grid-area: eyebrow; }
     .cover-page > .name-collage { grid-area: name; max-width: none; margin-top: 32px; }
     .cover-page > .name-note { grid-area: note; margin: 18px 0 0 5px; }
-    .cover-page > .cover-collection { grid-area: collection; width: 100%; margin: 40px 0 0; justify-self: center; }
-    .cover-page > .postcrossing-postcard { grid-area: postcard; justify-self: center; margin-top: 22px; }
+    .cover-collection > .portrait-print { grid-area: portrait; width: calc(100% - 14px); justify-self: center; margin: 44px 0 32px; }
+    .cover-collection > .small-collection { grid-area: scraps; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 16px; margin: 30px 0 0; padding: 0 4px; }
+    .cover-collection .camp-patch:nth-child(2) { --patch-y: 18px; }
+    .cover-collection .resume-scrap { align-self: flex-start; margin: 8px 0 0 4px; }
+    .cover-page > .postcrossing-postcard { --postcard-rotation: -6deg; grid-area: postcard; width: 180px; justify-self: start; margin: 34px 0 24px 40px; }
+    .cover-page .postcrossing-stats { left: 0; right: auto; }
     .cover-page .first-name { font-size: clamp(62px, 8.9vw, 98px); }
     .cover-page .middle-name { font-size: clamp(54px, 7.6vw, 82px); }
     .cover-page .last-name { font-size: clamp(47px, 6.7vw, 72px); }
@@ -451,7 +476,9 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
     .new-york-rain { display: none; }
     .portrait-doodles path { stroke-dashoffset: 0; }
-    .portrait-print:is(:hover, :focus-visible) { transform: rotate(-7deg); }
+    .portrait-print:is(:hover, :focus-visible) { transform: rotate(7deg); }
+    .postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(var(--postcard-rotation, -4deg)); }
+    .cover-collection .camp-patch:is(:hover, :focus-visible) { transform: translate(var(--patch-x, 0px), var(--patch-y, 0px)) rotate(var(--patch-rotation, 9deg)); }
 }
 
 /* Plain mode changes presentation, never the available content. */
@@ -472,7 +499,9 @@ html[data-mode="plain"] .index-tab:is(:hover, :focus-visible) { box-shadow: none
 html[data-mode="plain"] .index-tab > span { display: inline; writing-mode: horizontal-tb; white-space: normal; width: auto; min-height: 0; padding: 0; background: none; border: 0; box-shadow: none; font: inherit; transform: none; }
 html[data-mode="plain"] .index-tab::before, html[data-mode="plain"] .index-tab::after, html[data-mode="plain"] .index-tab > .tab-number, html[data-mode="plain"] .section-patch { display: none; }
 html[data-mode="plain"] .spread { display: block; min-height: 0; border-bottom: 1px solid var(--line); padding-bottom: 48px; margin-bottom: 48px; scroll-margin-top: 24px; }
+html[data-mode="plain"] .home-spread { background: none; }
 html[data-mode="plain"] .paper-page { display: block; padding: 0; background: none !important; box-shadow: none !important; border: 0 !important; min-height: 0; }
+html[data-mode="plain"] .welcome-page::before { display: none; }
 html[data-mode="plain"] .cover-collection, html[data-mode="plain"] .name-note, html[data-mode="plain"] .page-bottom,
 html[data-mode="plain"] .page-eyebrow, html[data-mode="plain"] .tiny-heading, html[data-mode="plain"] .tape,
 html[data-mode="plain"] .note-doodle, html[data-mode="plain"] .about-portrait, html[data-mode="plain"] .big-asterisk,
@@ -491,11 +520,12 @@ html[data-mode="plain"] p, html[data-mode="plain"] .welcome-note p { font-size: 
 html[data-mode="plain"] .reno-introduction { margin: 0; }
 html[data-mode="plain"] .reno-introduction > p { margin: 0 0 24px; }
 html[data-mode="plain"] .welcome-note .welcome-signoff { color: var(--muted); font-size: 16px; margin: 0 0 20px; }
-html[data-mode="plain"] .postcrossing-postcard { width: auto; align-items: flex-start; margin: 20px 0; transform: none; text-align: left; }
+html[data-mode="plain"] .postcrossing-postcard { width: auto; max-width: none; align-items: flex-start; margin: 20px 0; transform: none; text-align: left; }
 html[data-mode="plain"] .postcrossing-artwork { display: none; }
 html[data-mode="plain"] .postcrossing-label { font: inherit; text-decoration: underline; background: none; padding: 8px 0; margin: 0; box-shadow: none; }
 html[data-mode="plain"] .postcrossing-note, html[data-mode="plain"] .postcrossing-stats, html[data-mode="plain"] .postcrossing-date { font: inherit; }
-html[data-mode="plain"] .postcrossing-stats { visibility: visible; }
+html[data-mode="plain"] .postcrossing-stats { position: static; width: auto; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; visibility: visible; }
+html[data-mode="plain"] .postcrossing-distance strong { display: inline; font: inherit; }
 html[data-mode="plain"] :is(.reno-video-panel, .new-york-video-panel) { background: #fff; box-shadow: none; }
 html[data-mode="plain"] .new-york-rain { display: none; }
 html[data-mode="plain"] .reno-video-close { background: #fff; }

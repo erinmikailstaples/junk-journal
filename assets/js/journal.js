@@ -183,6 +183,27 @@
         });
     }
 
+    const postcard = document.querySelector('.postcrossing-postcard');
+    if (postcard) {
+        postcard.addEventListener('pointerleave', () => {
+            if (!postcard.matches(':focus-visible')) postcard.classList.remove('postcrossing-dismissed');
+        });
+        postcard.addEventListener('focusout', () => {
+            if (!postcard.matches(':hover')) postcard.classList.remove('postcrossing-dismissed');
+        });
+        postcard.addEventListener('pointerenter', () => {
+            if (!postcard.matches(':focus-visible')) postcard.classList.remove('postcrossing-dismissed');
+        });
+        postcard.addEventListener('focus', () => {
+            postcard.classList.remove('postcrossing-dismissed');
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && postcard.matches(':hover, :focus-visible')) {
+                postcard.classList.add('postcrossing-dismissed');
+            }
+        });
+    }
+
     const note = document.querySelector('.secret-note');
 
     if (note) {
