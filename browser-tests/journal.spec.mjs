@@ -23,6 +23,7 @@ test('portrait retains original colors and draws doodles on hover and keyboard f
     await page.goto('/');
     const portrait = page.locator('.portrait-print');
     const doodles = portrait.locator('.portrait-doodles');
+    expect(await portrait.evaluate(element => new DOMMatrixReadOnly(getComputedStyle(element).transform).b)).toBeGreaterThan(0);
     await expect(portrait.locator('img')).toHaveCSS('filter', 'none');
     await expect(doodles).toHaveCSS('opacity', '0');
     await portrait.hover();
@@ -41,7 +42,9 @@ test('portrait retains original colors and draws doodles on hover and keyboard f
 test('reduced motion reveals static portrait doodles without animation', async ({ page }) => {
     await page.goto('/');
     const portrait = page.locator('.portrait-print');
+    const restingTransform = await portrait.evaluate(element => getComputedStyle(element).transform);
     await portrait.focus();
+    await expect(portrait).toHaveCSS('transform', restingTransform);
     await expect(portrait.locator('.portrait-doodles')).toHaveCSS('opacity', '1');
     for (const path of await portrait.locator('.portrait-doodles path').all()) {
         await expect(path).toHaveCSS('animation-name', 'none');
