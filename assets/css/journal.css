@@ -330,7 +330,11 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .name-note { font-size: 13px; margin-left: 5px; }
     .cover-collection { max-width: 370px; margin: 32px 0 20px; gap: 20px; }
     .portrait-print { width: 62%; }
-    .small-collection { gap: 22px; }
+    .small-collection { gap: 14px; }
+    .cover-collection .camp-patch { width: 80px; }
+    .cover-collection .camp-patch img { width: 74px; }
+    .cover-collection .resume-scrap { display: inline-flex; align-items: center; min-height: 28px; }
+    .cover-collection .arrow-note { display: none; }
     .postage-stamp { width: 83px; font-size: 8px; }
     .camp-patch { width: 96px; }
     .camp-patch img { width: 90px; }
@@ -355,12 +359,12 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
 }
 @media (min-width: 700px) and (max-width: 1100px) {
     .cover-page, .welcome-page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); column-gap: clamp(24px, 4vw, 44px); align-items: start; padding-bottom: 80px; }
-    .cover-page { grid-template-areas: "eyebrow eyebrow" "name collection" "note collection" "postcard postcard"; grid-template-rows: auto auto auto 1fr; min-height: 0; }
+    .cover-page { grid-template-areas: "eyebrow eyebrow" "name collection" "note collection" "postcard postcard"; grid-template-rows: auto max-content 1fr auto; min-height: 0; }
     .cover-page > .page-eyebrow { grid-area: eyebrow; }
     .cover-page > .name-collage { grid-area: name; max-width: none; margin-top: 32px; }
     .cover-page > .name-note { grid-area: note; margin: 18px 0 0 5px; }
     .cover-page > .cover-collection { grid-area: collection; width: 100%; margin: 40px 0 0; justify-self: center; }
-    .cover-page > .postcrossing-postcard { grid-area: postcard; justify-self: center; margin-top: 22px; }
+    .cover-page > .postcrossing-postcard { grid-area: postcard; justify-self: center; margin-top: 42px; }
     .cover-page .first-name { font-size: clamp(62px, 8.9vw, 98px); }
     .cover-page .middle-name { font-size: clamp(54px, 7.6vw, 82px); }
     .cover-page .last-name { font-size: clamp(47px, 6.7vw, 72px); }

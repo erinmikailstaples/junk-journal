@@ -62,6 +62,16 @@ test('Postcrossing postcard remains readable and clear of the footer at every br
         const footer = await page.locator('.cover-page .page-bottom').boundingBox();
         const portrait = await page.locator('.portrait-print').boundingBox();
         expect(box.y, `${width}px below portrait`).toBeGreaterThan(portrait.y + portrait.height);
+        if (width <= 1100) {
+            const gap = box.y - portrait.y - portrait.height;
+            expect(gap, `${width}px portrait-to-postcard breathing room`).toBeGreaterThanOrEqual(20);
+            expect(gap, `${width}px postcard stays grouped with portrait`).toBeLessThanOrEqual(96);
+            if (width >= 700) {
+                const name = await page.locator('.name-collage').boundingBox();
+                const caption = await page.locator('.name-note').boundingBox();
+                expect(caption.y - name.y - name.height, `${width}px caption stays with name`).toBeLessThanOrEqual(24);
+            }
+        }
         expect(box.y + box.height + 12, `${width}px footer clearance`).toBeLessThan(footer.y);
         expect(box.x, `${width}px left edge`).toBeGreaterThanOrEqual(0);
         expect(box.x + box.width, `${width}px right edge`).toBeLessThanOrEqual(width);
