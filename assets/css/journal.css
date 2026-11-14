@@ -89,7 +89,15 @@ main:focus { outline: none; }
 .c8 { font-family: "Abril Fatface", Didot, Georgia, serif; font-size: .9em; background-color: #f2a13d; --r: 9deg; }
 .handwritten { font-family: var(--hand); font-size: 20px; font-weight: normal; }
 .name-note { display: block; transform: rotate(-3deg); margin: 18px 0 12px 12px; font-size: 14px; line-height: 1.3; }
-.cover-collection { display: flex; align-items: flex-start; gap: 20px; margin: 30px 0 28px; }
+.cover-page { display: grid; grid-template-columns: minmax(0, 1fr) 140px; column-gap: 20px; align-content: start; align-items: start; }
+.cover-page > :is(.page-eyebrow, .name-collage, .name-note) { grid-column: 1 / -1; }
+.cover-collection { display: contents; }
+.cover-collection > .portrait-print { grid-column: 1; grid-row: 4 / 6; width: 100%; margin: 34px 0 70px; }
+.cover-collection > .small-collection { grid-column: 2; grid-row: 4; margin-top: 32px; }
+.cover-collection .camp-patch { width: 70px; }
+.cover-collection .camp-patch img { width: 64px; }
+.cover-collection .resume-scrap { display: inline-flex; align-items: center; min-height: 28px; font-size: 10px; }
+.cover-collection .arrow-note { display: none; }
 .portrait-print { position: relative; display: block; width: 65%; background: linear-gradient(105deg, #fff8, transparent 30%, #a18b5c18), #f1ecde; padding: 10px 10px 19px; transform: rotate(-7deg); box-shadow: 1px 2px 3px #49372166, 5px 9px 10px #49372133; text-decoration: none; transition: transform .2s ease; border: 1px solid #b9ad96; border-bottom: 3px double #b9ad96; }
 .portrait-print:hover, .portrait-print:focus-visible { transform: rotate(-3deg) translateY(-4px); }
 .portrait-print img { width: 100%; display: block; }
@@ -104,16 +112,16 @@ main:focus { outline: none; }
 .photo-caption { display: block; font-family: "Courier New", monospace; font-weight: bold; font-size: 10px; margin-top: 10px; text-align: center; line-height: 1.4; }
 .tape { position: absolute; z-index: 1; height: 35px; width: 112px; background: linear-gradient(90deg, #bca56a55, #f0e2b155 20% 75%, #ae945b55), repeating-linear-gradient(1deg, #b09a6333 0 1px, transparent 1px 3px), #ddcb95b8; box-shadow: inset 0 1px #fff5, inset 0 -1px #8e784d66; left: 50%; top: -14px; transform: translateX(-50%) rotate(-5deg); clip-path: polygon(4% 0,97% 5%,94% 20%,100% 38%,96% 55%,100% 76%,97% 97%,1% 100%,4% 70%,0 60%,5% 40%,1% 18%); }
 .tape-top { transform: translateX(-50%) rotate(9deg); }
-.postcrossing-postcard { position: relative; display: flex; flex-direction: column; align-items: center; width: min(100%, 280px); margin: 38px 0 30px 12px; text-align: center; text-decoration: none; transform: rotate(4deg); transition: transform .2s; }
+.postcrossing-postcard { position: relative; display: flex; flex-direction: column; align-items: center; grid-column: 2; grid-row: 5; justify-self: end; width: 100%; max-width: 180px; margin: 26px 0 65px; text-align: center; text-decoration: none; transform: rotate(var(--postcard-rotation, 4deg)); transition: transform .2s; }
 .postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(0) translateY(-4px); }
 .postcrossing-artwork { display: block; width: 100%; overflow: visible; filter: drop-shadow(2px 4px 3px #49372155); }
 .postcard-paper { fill: #fffdf6; stroke: #b9ad96; stroke-width: 2; }
 .postcard-lines { stroke: #b9ad96; stroke-width: 2; }
 .postcard-greeting { fill: var(--ink); font: 28px var(--hand); }
 .postcard-stamp { fill: var(--pink); stroke: #171717; stroke-width: 2; stroke-dasharray: 3 2; }
-.postcrossing-label { position: relative; background: #eee1bb; padding: 4px 12px; margin-top: -13px; font: bold 12px/1.4 "Courier New", monospace; box-shadow: 1px 2px 3px #48352044; }
-.postcrossing-note { font: 20px/1.4 var(--hand); margin-top: 4px; }
-.postcrossing-stats { position: absolute; z-index: 2; bottom: 64px; inset-inline: 0; padding: 12px; border: 2px solid var(--ink); background: #fffdf6; box-shadow: 4px 4px 0 var(--ink); font: 13px/1.6 var(--sans); visibility: hidden; }
+.postcrossing-label { position: relative; background: #eee1bb; padding: 4px 8px; margin-top: -8px; font: bold 10px/1.4 "Courier New", monospace; box-shadow: 1px 2px 3px #48352044; }
+.postcrossing-note { font: 15px/1.3 var(--hand); margin-top: 4px; }
+.postcrossing-stats { position: absolute; z-index: 2; bottom: 54px; right: 0; width: 230px; padding: 12px; border: 2px solid var(--ink); background: #fffdf6; box-shadow: 4px 4px 0 var(--ink); font: 13px/1.6 var(--sans); visibility: hidden; }
 .postcrossing-postcard:is(:hover, :focus-visible):not(.postcrossing-dismissed) .postcrossing-stats { visibility: visible; }
 .postcrossing-distance { display: block; margin-block: 4px; }
 .postcrossing-distance strong { display: block; font-size: 22px; line-height: 1.3; }
@@ -328,13 +336,14 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .middle-name { font-size: clamp(46px, 12.5vw, 88px); }
     .last-name { font-size: clamp(40px, 11vw, 78px); }
     .name-note { font-size: 13px; margin-left: 5px; }
-    .cover-collection { max-width: 370px; margin: 32px 0 20px; gap: 20px; }
-    .portrait-print { width: 62%; }
+    .cover-page { grid-template-columns: minmax(0, 1fr) 68px; column-gap: 18px; min-height: 0; padding-bottom: 80px; }
+    .cover-collection > .portrait-print { grid-row: 4; margin: 32px 0 0; }
+    .cover-collection > .small-collection { margin-top: 40px; }
+    .cover-page > .postcrossing-postcard { grid-column: 1 / -1; width: min(42vw, 170px); margin: 24px 8px 20px 0; }
     .small-collection { gap: 14px; }
-    .cover-collection .camp-patch { width: 80px; }
-    .cover-collection .camp-patch img { width: 74px; }
-    .cover-collection .resume-scrap { display: inline-flex; align-items: center; min-height: 28px; }
-    .cover-collection .arrow-note { display: none; }
+    .cover-collection .camp-patch { width: 64px; }
+    .cover-collection .camp-patch img { width: 58px; }
+    .cover-collection .resume-scrap { font-size: 9px; }
     .postage-stamp { width: 83px; font-size: 8px; }
     .camp-patch { width: 96px; }
     .camp-patch img { width: 90px; }
@@ -359,12 +368,15 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
 }
 @media (min-width: 700px) and (max-width: 1100px) {
     .cover-page, .welcome-page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); column-gap: clamp(24px, 4vw, 44px); align-items: start; padding-bottom: 80px; }
-    .cover-page { grid-template-areas: "eyebrow eyebrow" "name collection" "note collection" "postcard postcard"; grid-template-rows: auto max-content 1fr auto; min-height: 0; }
+    .cover-page { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); grid-template-areas: "eyebrow eyebrow" "name portrait" "note portrait" "scraps portrait" "postcard portrait"; grid-template-rows: auto max-content max-content max-content 1fr; min-height: 0; }
     .cover-page > .page-eyebrow { grid-area: eyebrow; }
     .cover-page > .name-collage { grid-area: name; max-width: none; margin-top: 32px; }
     .cover-page > .name-note { grid-area: note; margin: 18px 0 0 5px; }
-    .cover-page > .cover-collection { grid-area: collection; width: 100%; margin: 40px 0 0; justify-self: center; }
-    .cover-page > .postcrossing-postcard { grid-area: postcard; justify-self: center; margin-top: 42px; }
+    .cover-collection > .portrait-print { grid-area: portrait; width: calc(100% - 14px); justify-self: center; margin: 44px 0 32px; }
+    .cover-collection > .small-collection { grid-area: scraps; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 16px; margin: 30px 0 0; padding: 0 4px; }
+    .cover-collection .small-collection > :nth-child(2) { transform: rotate(-8deg) translateY(8px); }
+    .cover-page > .postcrossing-postcard { --postcard-rotation: -6deg; grid-area: postcard; width: 180px; justify-self: start; margin: 28px 0 24px 18px; }
+    .cover-page .postcrossing-stats { left: 0; right: auto; }
     .cover-page .first-name { font-size: clamp(62px, 8.9vw, 98px); }
     .cover-page .middle-name { font-size: clamp(54px, 7.6vw, 82px); }
     .cover-page .last-name { font-size: clamp(47px, 6.7vw, 72px); }
@@ -462,7 +474,7 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .new-york-rain { display: none; }
     .portrait-doodles path { stroke-dashoffset: 0; }
     .portrait-print:is(:hover, :focus-visible) { transform: rotate(-7deg); }
-    .postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(4deg); }
+    .postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(var(--postcard-rotation, 4deg)); }
 }
 
 /* Plain mode changes presentation, never the available content. */
@@ -504,7 +516,7 @@ html[data-mode="plain"] p, html[data-mode="plain"] .welcome-note p { font-size: 
 html[data-mode="plain"] .reno-introduction { margin: 0; }
 html[data-mode="plain"] .reno-introduction > p { margin: 0 0 24px; }
 html[data-mode="plain"] .welcome-note .welcome-signoff { color: var(--muted); font-size: 16px; margin: 0 0 20px; }
-html[data-mode="plain"] .postcrossing-postcard { width: auto; align-items: flex-start; margin: 20px 0; transform: none; text-align: left; }
+html[data-mode="plain"] .postcrossing-postcard { width: auto; max-width: none; align-items: flex-start; margin: 20px 0; transform: none; text-align: left; }
 html[data-mode="plain"] .postcrossing-artwork { display: none; }
 html[data-mode="plain"] .postcrossing-label { font: inherit; text-decoration: underline; background: none; padding: 8px 0; margin: 0; box-shadow: none; }
 html[data-mode="plain"] .postcrossing-note, html[data-mode="plain"] .postcrossing-stats, html[data-mode="plain"] .postcrossing-date { font: inherit; }

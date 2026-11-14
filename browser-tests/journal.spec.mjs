@@ -51,7 +51,7 @@ test('reduced motion reveals static portrait doodles without animation', async (
     expect(results.violations).toEqual([]);
 });
 
-test('Postcrossing postcard remains readable and clear of the footer at every breakpoint', async ({ page }) => {
+test('portrait leads the scattered scraps and Postcrossing stays clear of the footer at every breakpoint', async ({ page }) => {
     for (const width of [320, 390, 700, 768, 1024, 1100, 1440, 1920]) {
         await page.setViewportSize({ width, height: 1100 });
         await page.goto('/');
@@ -61,22 +61,33 @@ test('Postcrossing postcard remains readable and clear of the footer at every br
         const box = await postcard.boundingBox();
         const footer = await page.locator('.cover-page .page-bottom').boundingBox();
         const portrait = await page.locator('.portrait-print').boundingBox();
-        expect(box.y, `${width}px below portrait`).toBeGreaterThan(portrait.y + portrait.height);
-        if (width <= 1100) {
-            const gap = box.y - portrait.y - portrait.height;
-            expect(gap, `${width}px portrait-to-postcard breathing room`).toBeGreaterThanOrEqual(20);
-            expect(gap, `${width}px postcard stays grouped with portrait`).toBeLessThanOrEqual(96);
-            if (width >= 700) {
-                const name = await page.locator('.name-collage').boundingBox();
-                const caption = await page.locator('.name-note').boundingBox();
-                expect(caption.y - name.y - name.height, `${width}px caption stays with name`).toBeLessThanOrEqual(24);
-            }
+        expect(portrait.width, `${width}px portrait is larger than postcard`).toBeGreaterThan(box.width * 1.05);
+        expect(box.width, `${width}px postcard remains a small scrap`).toBeLessThan(200);
+        if (width > 1100) {
+            expect(box.y, `${width}px postcard sits alongside the portrait`).toBeLessThan(portrait.y + portrait.height);
+        }
+        if (width >= 700 && width <= 1100) {
+            expect(box.x + box.width, `${width}px postcard stays in the name-side scraps`).toBeLessThan(portrait.x);
+            const name = await page.locator('.name-collage').boundingBox();
+            const caption = await page.locator('.name-note').boundingBox();
+            expect(caption.y - name.y - name.height, `${width}px caption stays with name`).toBeLessThanOrEqual(24);
+        }
+        for (const control of await page.locator('.cover-page a').all()) {
+            const target = await control.boundingBox();
+            expect(target.width, `${width}px target width`).toBeGreaterThanOrEqual(24);
+            expect(target.height, `${width}px target height`).toBeGreaterThanOrEqual(24);
+            expect(await control.evaluate(element => {
+                const box = element.getBoundingClientRect();
+                return element.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2));
+            }), `${width}px control center is unobscured`).toBe(true);
         }
         expect(box.y + box.height + 12, `${width}px footer clearance`).toBeLessThan(footer.y);
         expect(box.x, `${width}px left edge`).toBeGreaterThanOrEqual(0);
         expect(box.x + box.width, `${width}px right edge`).toBeLessThanOrEqual(width);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        const idleTransform = await postcard.evaluate(element => getComputedStyle(element).transform);
         await postcard.focus();
+        await expect(postcard).toHaveCSS('transform', idleTransform);
         await expect(postcard).toHaveCSS('outline-style', 'solid');
         const popup = await postcard.locator('.postcrossing-stats').boundingBox();
         expect(popup.x, `${width}px popup left edge`).toBeGreaterThanOrEqual(0);
