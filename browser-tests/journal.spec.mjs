@@ -68,6 +68,10 @@ test('Postcrossing postcard remains readable and clear of the footer at every br
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
         await postcard.focus();
         await expect(postcard).toHaveCSS('outline-style', 'solid');
+        const popup = await postcard.locator('.postcrossing-stats').boundingBox();
+        expect(popup.x, `${width}px popup left edge`).toBeGreaterThanOrEqual(0);
+        expect(popup.x + popup.width, `${width}px popup right edge`).toBeLessThanOrEqual(width);
+        expect(popup.y + popup.height + 12, `${width}px popup footer clearance`).toBeLessThan(footer.y);
         await page.locator('.mode-toggle').click();
         await expect(postcard).toBeVisible();
         await expect(postcard.locator('.postcrossing-artwork')).toBeHidden();
@@ -86,12 +90,28 @@ test('Postcrossing stats reveal on hover and focus without layout shifts, and cl
     await postcard.hover();
     await expect(stats).toBeVisible();
     await expect(stats).toContainText('28 sent / 28 received');
+    await expect(stats).toContainText('99,165 miles traveled by sent cards');
+    await expect(stats).toHaveCSS('position', 'absolute');
+    await expect(stats).toHaveCSS('border-top-width', '2px');
     expect(await postcard.evaluate(element => element.offsetHeight)).toBe(idleHeight);
+    await stats.hover();
+    await expect(stats).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(stats).toBeHidden();
+    await page.mouse.move(0, 0);
+    await postcard.hover();
+    await expect(stats).toBeVisible();
     await page.mouse.move(0, 0);
     await expect(stats).toBeHidden();
     await postcard.focus();
     await expect(stats).toBeVisible();
-    await expect(postcard).toHaveAccessibleDescription(/28 sent \/ 28 received/);
+    await expect(postcard).toHaveAccessibleDescription(/99,165 miles traveled by sent cards/);
+    await page.keyboard.press('Escape');
+    await expect(stats).toBeHidden();
+    await expect(postcard).toBeFocused();
+    await page.keyboard.press('Tab');
+    await postcard.focus();
+    await expect(stats).toBeVisible();
     const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
     expect(results.violations).toEqual([]);
     await page.route('https://www.postcrossing.com/user/erinmikail', route =>
@@ -102,24 +122,32 @@ test('Postcrossing stats reveal on hover and focus without layout shifts, and cl
 });
 
 test('Postcrossing stats stay visible on touch and a single tap opens the profile', async ({ browser }) => {
-    const context = await browser.newContext({
-        baseURL: 'http://127.0.0.1:2468',
-        viewport: { width: 390, height: 844 },
-        isMobile: true,
-        hasTouch: true
-    });
-    try {
-        const page = await context.newPage();
-        await page.goto('/');
-        const postcard = page.getByRole('link', { name: 'Postcrossing', exact: true });
-        await expect(postcard.locator('.postcrossing-stats')).toBeVisible();
-        await page.route('https://www.postcrossing.com/user/erinmikail', route =>
-            route.fulfill({ contentType: 'text/html', body: '<title>Postcrossing profile</title>' })
-        );
-        await postcard.tap();
-        await expect(page).toHaveURL('https://www.postcrossing.com/user/erinmikail');
-    } finally {
-        await context.close();
+    for (const width of [390, 820]) {
+        const context = await browser.newContext({
+            baseURL: 'http://127.0.0.1:2468',
+            viewport: { width, height: 1100 },
+            isMobile: true,
+            hasTouch: true
+        });
+        try {
+            const page = await context.newPage();
+            await page.goto('/');
+            const postcard = page.getByRole('link', { name: 'Postcrossing', exact: true });
+            const stats = postcard.locator('.postcrossing-stats');
+            await expect(stats).toBeVisible();
+            await expect(stats).toContainText('99,165 miles traveled by sent cards');
+            await expect(stats).toHaveCSS('position', 'static');
+            const box = await postcard.boundingBox();
+            const footer = await page.locator('.cover-page .page-bottom').boundingBox();
+            expect(box.y + box.height + 12, `${width}px touch footer clearance`).toBeLessThan(footer.y);
+            await page.route('https://www.postcrossing.com/user/erinmikail', route =>
+                route.fulfill({ contentType: 'text/html', body: '<title>Postcrossing profile</title>' })
+            );
+            await postcard.tap();
+            await expect(page).toHaveURL('https://www.postcrossing.com/user/erinmikail');
+        } finally {
+            await context.close();
+        }
     }
 });
 

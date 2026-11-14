@@ -104,8 +104,8 @@ main:focus { outline: none; }
 .photo-caption { display: block; font-family: "Courier New", monospace; font-weight: bold; font-size: 10px; margin-top: 10px; text-align: center; line-height: 1.4; }
 .tape { position: absolute; z-index: 1; height: 35px; width: 112px; background: linear-gradient(90deg, #bca56a55, #f0e2b155 20% 75%, #ae945b55), repeating-linear-gradient(1deg, #b09a6333 0 1px, transparent 1px 3px), #ddcb95b8; box-shadow: inset 0 1px #fff5, inset 0 -1px #8e784d66; left: 50%; top: -14px; transform: translateX(-50%) rotate(-5deg); clip-path: polygon(4% 0,97% 5%,94% 20%,100% 38%,96% 55%,100% 76%,97% 97%,1% 100%,4% 70%,0 60%,5% 40%,1% 18%); }
 .tape-top { transform: translateX(-50%) rotate(9deg); }
-.postcrossing-postcard { display: flex; flex-direction: column; align-items: center; width: min(100%, 280px); margin: 38px 0 30px 12px; text-align: center; text-decoration: none; transform: rotate(4deg); transition: transform .2s; }
-.postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(-2deg); }
+.postcrossing-postcard { position: relative; display: flex; flex-direction: column; align-items: center; width: min(100%, 280px); margin: 38px 0 30px 12px; text-align: center; text-decoration: none; transform: rotate(4deg); transition: transform .2s; }
+.postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(0) translateY(-4px); }
 .postcrossing-artwork { display: block; width: 100%; overflow: visible; filter: drop-shadow(2px 4px 3px #49372155); }
 .postcard-paper { fill: #fffdf6; stroke: #b9ad96; stroke-width: 2; }
 .postcard-lines { stroke: #b9ad96; stroke-width: 2; }
@@ -113,11 +113,13 @@ main:focus { outline: none; }
 .postcard-stamp { fill: var(--pink); stroke: #171717; stroke-width: 2; stroke-dasharray: 3 2; }
 .postcrossing-label { position: relative; background: #eee1bb; padding: 4px 12px; margin-top: -13px; font: bold 12px/1.4 "Courier New", monospace; box-shadow: 1px 2px 3px #48352044; }
 .postcrossing-note { font: 20px/1.4 var(--hand); margin-top: 4px; }
-.postcrossing-stats { font: 11px/1.6 var(--sans); visibility: hidden; }
-.postcrossing-postcard:is(:hover, :focus-visible) .postcrossing-stats { visibility: visible; }
-.postcrossing-date { display: block; font-size: 10px; }
+.postcrossing-stats { position: absolute; z-index: 2; bottom: 64px; inset-inline: 0; padding: 12px; border: 2px solid var(--ink); background: #fffdf6; box-shadow: 4px 4px 0 var(--ink); font: 13px/1.6 var(--sans); visibility: hidden; }
+.postcrossing-postcard:is(:hover, :focus-visible):not(.postcrossing-dismissed) .postcrossing-stats { visibility: visible; }
+.postcrossing-distance { display: block; margin-block: 4px; }
+.postcrossing-distance strong { display: block; font-size: 22px; line-height: 1.3; }
+.postcrossing-date { display: block; font-size: 11px; }
 @media (hover: none), (pointer: coarse) {
-    .postcrossing-stats { visibility: visible; }
+    .postcrossing-stats { position: static; width: 100%; margin-top: 12px; visibility: visible; }
 }
 .small-collection { flex: 1; display: flex; flex-direction: column; align-items: center; padding-top: 4px; gap: 20px; }
 .postage-stamp { display: flex; flex-direction: column; align-items: center; width: 106px; background: repeating-linear-gradient(0deg, #6e6c4020 0 1px, transparent 1px 3px), #d8d0b1; border: 3px double #65724f; outline: 2px dashed #c3b991; outline-offset: 2px; padding: 9px 5px 6px; font-family: "Courier New", monospace; font-weight: bold; font-size: 9px; line-height: 1.5; text-align: center; transform: rotate(10deg); letter-spacing: -.04em; box-shadow: 2px 4px 5px #48352044; }
@@ -316,6 +318,10 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .paper-page { padding: 25px 28px 50px; }
     .spread > .paper-page:first-child { border-right: 0; border-bottom: 1px solid var(--line); box-shadow: none; }
     .spread > .paper-page:last-child { box-shadow: none; }
+    .home-spread { background-color: var(--paper); background-image: radial-gradient(ellipse at 3% 50%, #93784b24, transparent 45%), radial-gradient(ellipse at 90% 95%, #ac875526, transparent 25%), repeating-linear-gradient(0deg, transparent, transparent 3px, #00000006 3px, #00000006 4px); }
+    .home-spread > .paper-page:is(:first-child, :last-child) { border-bottom: 0; background: none; }
+    .home-spread > .welcome-page { isolation: isolate; }
+    .home-spread > .welcome-page::before { content: ""; position: absolute; z-index: -1; inset: 76px 0 0; pointer-events: none; background-image: linear-gradient(90deg, transparent 23px, #b0476e40 23px, #b0476e40 25px, transparent 25px), repeating-linear-gradient(180deg, transparent, transparent 27px, #586dd520 27px, #586dd520 28px); }
     .cover-page { min-height: 720px; }
     .name-collage { max-width: 380px; margin: 30px 0 0; }
     .first-name { font-size: clamp(56px, 15vw, 104px); }
@@ -452,6 +458,7 @@ figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-to
     .new-york-rain { display: none; }
     .portrait-doodles path { stroke-dashoffset: 0; }
     .portrait-print:is(:hover, :focus-visible) { transform: rotate(-7deg); }
+    .postcrossing-postcard:is(:hover, :focus-visible) { transform: rotate(4deg); }
 }
 
 /* Plain mode changes presentation, never the available content. */
@@ -472,7 +479,9 @@ html[data-mode="plain"] .index-tab:is(:hover, :focus-visible) { box-shadow: none
 html[data-mode="plain"] .index-tab > span { display: inline; writing-mode: horizontal-tb; white-space: normal; width: auto; min-height: 0; padding: 0; background: none; border: 0; box-shadow: none; font: inherit; transform: none; }
 html[data-mode="plain"] .index-tab::before, html[data-mode="plain"] .index-tab::after, html[data-mode="plain"] .index-tab > .tab-number, html[data-mode="plain"] .section-patch { display: none; }
 html[data-mode="plain"] .spread { display: block; min-height: 0; border-bottom: 1px solid var(--line); padding-bottom: 48px; margin-bottom: 48px; scroll-margin-top: 24px; }
+html[data-mode="plain"] .home-spread { background: none; }
 html[data-mode="plain"] .paper-page { display: block; padding: 0; background: none !important; box-shadow: none !important; border: 0 !important; min-height: 0; }
+html[data-mode="plain"] .welcome-page::before { display: none; }
 html[data-mode="plain"] .cover-collection, html[data-mode="plain"] .name-note, html[data-mode="plain"] .page-bottom,
 html[data-mode="plain"] .page-eyebrow, html[data-mode="plain"] .tiny-heading, html[data-mode="plain"] .tape,
 html[data-mode="plain"] .note-doodle, html[data-mode="plain"] .about-portrait, html[data-mode="plain"] .big-asterisk,
@@ -495,7 +504,8 @@ html[data-mode="plain"] .postcrossing-postcard { width: auto; align-items: flex-
 html[data-mode="plain"] .postcrossing-artwork { display: none; }
 html[data-mode="plain"] .postcrossing-label { font: inherit; text-decoration: underline; background: none; padding: 8px 0; margin: 0; box-shadow: none; }
 html[data-mode="plain"] .postcrossing-note, html[data-mode="plain"] .postcrossing-stats, html[data-mode="plain"] .postcrossing-date { font: inherit; }
-html[data-mode="plain"] .postcrossing-stats { visibility: visible; }
+html[data-mode="plain"] .postcrossing-stats { position: static; width: auto; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; visibility: visible; }
+html[data-mode="plain"] .postcrossing-distance strong { display: inline; font: inherit; }
 html[data-mode="plain"] :is(.reno-video-panel, .new-york-video-panel) { background: #fff; box-shadow: none; }
 html[data-mode="plain"] .new-york-rain { display: none; }
 html[data-mode="plain"] .reno-video-close { background: #fff; }
